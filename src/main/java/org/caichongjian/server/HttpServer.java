@@ -17,6 +17,8 @@ public class HttpServer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(HttpServer.class);
 
+    private static boolean running = true;
+
     public static void main(String[] args) {
 
 
@@ -24,32 +26,35 @@ public class HttpServer {
 
             LOGGER.info("starting the server....");
 
-            while (true) {
-                try (Socket s = ss.accept();
-                     InputStream inputStream = s.getInputStream();
-                     OutputStream outputStream = s.getOutputStream()) {
-
-                    LOGGER.debug("客户端:" + s.getInetAddress().getHostAddress() + "已连接到服务器");
-
-                    Request request = new Request(inputStream);
-                    request.parse();
-
-                    final String webRootPath = ServletContext.getInstance().getWebRootPath();
-                    LOGGER.info(webRootPath);
-
-                    Response response = new Response(outputStream);
-                    response.sendStaticResource(request.getUri());
-
-                    if (EXIT_COMMAND.equals(request.getUri())) {
-                        break;
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            while (running) {
+                handleRequest(ss);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("an I/O error occurs: ", e);
+        }
+    }
+
+    /**
+     * 处理http请求，并返回相应资源
+     * @param ss server socket
+     */
+    private static void handleRequest(ServerSocket ss) {
+        try (Socket s = ss.accept();
+             InputStream inputStream = s.getInputStream();
+             OutputStream outputStream = s.getOutputStream()) {
+
+            LOGGER.debug("客户端: {} 已连接到服务器", s.getInetAddress().getHostAddress());
+
+            Request request = new Request(inputStream);
+            request.parse();
+
+            Response response = new Response(outputStream);
+            response.sendStaticResource(request.getUri());
+
+            running = !EXIT_COMMAND.equals(request.getUri());
+
+        } catch (IOException e) {
+            LOGGER.error("an I/O error occurs: ", e);
         }
     }
 }
