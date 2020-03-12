@@ -1,4 +1,4 @@
-/adam-server.iml
+*.iml
 /.idea/
 /logs/
-/target/
+target/

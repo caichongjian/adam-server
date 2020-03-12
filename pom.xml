@@ -6,7 +6,12 @@
 
     <groupId>org.caichongjian</groupId>
     <artifactId>adam-server</artifactId>
+    <packaging>pom</packaging>
     <version>0.1-SNAPSHOT</version>
+    <modules>
+        <module>mini-servlet-api</module>
+        <module>adam-server-core</module>
+    </modules>
     <properties>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
