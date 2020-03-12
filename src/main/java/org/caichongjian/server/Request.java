@@ -2,6 +2,7 @@ package org.caichongjian.server;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.caichongjian.api.MiniHttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +11,7 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Request {
+public class Request implements MiniHttpServletRequest {
 
     private InputStream inputStream;
     private String content;

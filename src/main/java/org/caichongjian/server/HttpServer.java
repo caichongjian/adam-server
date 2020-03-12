@@ -36,6 +36,7 @@ public class HttpServer {
 
     /**
      * 处理http请求，并返回相应资源
+     *
      * @param ss server socket
      */
     private static void handleRequest(ServerSocket ss) {
@@ -49,7 +50,14 @@ public class HttpServer {
             request.parse();
 
             Response response = new Response(outputStream);
-            response.sendStaticResource(request.getUri());
+
+            if (request.getUri().startsWith("/servlet")) {
+                ServletProcessor processor = new ServletProcessor();
+                processor.process(request, response);
+            } else {
+                StaticResourceProcessor processor = new StaticResourceProcessor();
+                processor.process(request, response);
+            }
 
             running = !EXIT_COMMAND.equals(request.getUri());
 
