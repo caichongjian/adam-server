@@ -16,7 +16,7 @@
         %n:输出一个换行符号
     -->
     <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符-->
-    <property name="pattern" value="%d{yyyyMMdd:HH:mm:ss.SSS} [%-5level] [%thread] [%logger] %msg%n"/>
+    <property name="pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] [%logger] %msg%n"/>
 
     <!--控制台输出日志-->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -33,17 +33,15 @@
         <!--根据时间来记录日志文件：-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--归档日志文件的名称：-->
-            <fileNamePattern>${LOG_DIR}/debug-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- 每个归档文件最大100MB, 最多保留30天, 总共最多2GB -->
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
         <!-- 配置日志文件中的日志级别 -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>DEBUG</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <!--生成的日志信息格式-->
         <encoder>
@@ -58,17 +56,15 @@
         <!--根据时间来记录日志文件：-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--归档日志文件的名称：-->
-            <fileNamePattern>${LOG_DIR}/info-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- 每个归档文件最大100MB, 最多保留30天, 总共最多2GB -->
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
         <!-- 配置日志文件中的日志级别 -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <!--生成的日志信息格式-->
         <encoder>
@@ -83,17 +79,15 @@
         <!--根据时间来记录日志文件：-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--归档日志文件的名称：-->
-            <fileNamePattern>${LOG_DIR}/error-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- 每个归档文件最大100MB, 最多保留30天, 总共最多2GB -->
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
         <!-- 配置日志文件中的日志级别 -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <!--生成的日志信息格式-->
         <encoder>
