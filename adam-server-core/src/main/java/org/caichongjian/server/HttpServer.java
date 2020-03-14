@@ -19,8 +19,7 @@ public class HttpServer {
 
     private static boolean running = true;
 
-    public static void main(String[] args) {
-
+    public static void start() {
 
         try (ServerSocket ss = new ServerSocket(PORT)) {
 
@@ -51,8 +50,8 @@ public class HttpServer {
 
             Response response = new Response(outputStream);
 
-            if (request.getUri().startsWith("/servlet")) {
-                ServletProcessor processor = new ServletProcessor();
+            if (RestProcessor.containsUriMapping(request.getUri())) {
+                RestProcessor processor = new RestProcessor();
                 processor.process(request, response);
             } else {
                 StaticResourceProcessor processor = new StaticResourceProcessor();

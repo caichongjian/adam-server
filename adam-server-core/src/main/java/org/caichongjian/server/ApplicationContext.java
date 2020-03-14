@@ -1,9 +1,9 @@
 package org.caichongjian.server;
 
-public class ServletContext {
+public class ApplicationContext {
 
-    private static class ServletContextHolder {
-        private static final ServletContext INSTANCE = new ServletContext();
+    private static class ApplicationContextHolder {
+        private static final ApplicationContext INSTANCE = new ApplicationContext();
     }
 
     /**
@@ -17,13 +17,13 @@ public class ServletContext {
     private String webRootPath;
 
 
-    private ServletContext() {
+    private ApplicationContext() {
         rootPath = getClass().getResource("/").getFile();
         webRootPath = rootPath + "static/";
     }
 
-    public static ServletContext getInstance() {
-        return ServletContextHolder.INSTANCE;
+    public static ApplicationContext getInstance() {
+        return ApplicationContextHolder.INSTANCE;
     }
 
     public String getWebRootPath() {

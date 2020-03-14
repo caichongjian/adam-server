@@ -17,6 +17,7 @@ public class Request implements MiniHttpServletRequest {
     private String content;
     private Map<String, String> headers = new LinkedHashMap<>();
     private String uri;
+    private String method;
     private static final Logger LOGGER = LoggerFactory.getLogger(Request.class);
 
     public Request(InputStream inputStream) {
@@ -52,6 +53,7 @@ public class Request implements MiniHttpServletRequest {
         // 解析method、uri、version
         String firstLine = content.lines().findFirst().orElseThrow();
         String[] firstLineProperties = firstLine.split(" ");
+        method = firstLineProperties[0];
         uri = firstLineProperties[1];
 
         // 解析http请求的header
@@ -67,5 +69,10 @@ public class Request implements MiniHttpServletRequest {
 
     public String getUri() {
         return uri;
+    }
+
+    @Override
+    public String getMethod() {
+        return method;
     }
 }

@@ -11,6 +11,7 @@
     <modules>
         <module>mini-servlet-api</module>
         <module>adam-server-core</module>
+        <module>adam-server-example</module>
     </modules>
     <properties>
         <slf4j.version>1.7.25</slf4j.version>
@@ -18,6 +19,7 @@
         <commons-io.version>2.6</commons-io.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <guava.version>28.2-jre</guava.version>
+        <fastjson.version>1.2.66</fastjson.version>
     </properties>
 
     <dependencies>
@@ -44,6 +46,13 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
 
 
