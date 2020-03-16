@@ -1,9 +1,10 @@
-package org.caichongjian.server;
+package org.caichongjian.server.startup;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import org.caichongjian.annotations.MiniControllerScan;
 import org.caichongjian.annotations.MiniRestController;
+import org.caichongjian.server.RestProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class AdamServerApplication {
 
         if (annotation == null) {
             LOGGER.error("请在启动类加上MiniControllerScan注解");
-            System.exit(0);
+            System.exit(1);
         }
 
         // 扫描RestController
@@ -38,7 +39,7 @@ public class AdamServerApplication {
                 }
             } catch (Exception | NoClassDefFoundError e) {
                 LOGGER.error("扫描MiniControllerScan失败", e);
-                System.exit(0);
+                System.exit(1);
             }
         }
 

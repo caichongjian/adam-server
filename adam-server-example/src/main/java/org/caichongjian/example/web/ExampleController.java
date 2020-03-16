@@ -11,6 +11,6 @@ public class ExampleController {
 
     @MiniRequestMapping("/hello")
     public Map<String, Object> hello() {
-        return Map.of("ccj", 1, "adam", 2);
+        return Map.of("ccj", 1, "adam", 2, "蔡崇建", 3);
     }
 }

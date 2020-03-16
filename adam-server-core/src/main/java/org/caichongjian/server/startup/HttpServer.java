@@ -1,13 +1,18 @@
-package org.caichongjian.server;
+package org.caichongjian.server.startup;
 
+import org.caichongjian.server.RestProcessor;
+import org.caichongjian.server.StaticResourceProcessor;
+import org.caichongjian.server.http.Request;
+import org.caichongjian.server.http.RequestStream;
+import org.caichongjian.server.http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HttpServer {
 
@@ -17,7 +22,7 @@ public class HttpServer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(HttpServer.class);
 
-    private static boolean running = true;
+    private static AtomicBoolean runningFlag = new AtomicBoolean(true);
 
     public static void start() {
 
@@ -25,7 +30,7 @@ public class HttpServer {
 
             LOGGER.info("starting the server....");
 
-            while (running) {
+            while (runningFlag.get()) {
                 handleRequest(ss);
             }
         } catch (IOException e) {
@@ -40,17 +45,18 @@ public class HttpServer {
      */
     private static void handleRequest(ServerSocket ss) {
         try (Socket s = ss.accept();
-             InputStream inputStream = s.getInputStream();
+             RequestStream requestStream = new RequestStream(s.getInputStream());
              OutputStream outputStream = s.getOutputStream()) {
 
             LOGGER.debug("客户端: {} 已连接到服务器", s.getInetAddress().getHostAddress());
 
-            Request request = new Request(inputStream);
+//            s.setSoTimeout(10 * 1000);  // Ten seconds
+            Request request = new Request(requestStream);
             request.parse();
 
             Response response = new Response(outputStream);
 
-            if (RestProcessor.containsUriMapping(request.getUri())) {
+            if (RestProcessor.containsUriMapping(request.getRequestURI())) {
                 RestProcessor processor = new RestProcessor();
                 processor.process(request, response);
             } else {
@@ -58,7 +64,7 @@ public class HttpServer {
                 processor.process(request, response);
             }
 
-            running = !EXIT_COMMAND.equals(request.getUri());
+            runningFlag.set(!EXIT_COMMAND.equals(request.getRequestURI()));
 
         } catch (IOException e) {
             LOGGER.error("an I/O error occurs: ", e);

@@ -2,6 +2,8 @@ package org.caichongjian.server;
 
 import com.alibaba.fastjson.JSON;
 import org.caichongjian.annotations.MiniRequestMapping;
+import org.caichongjian.server.http.Request;
+import org.caichongjian.server.http.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +25,8 @@ public class RestProcessor {
      * @param response http response
      */
     public void process(Request request, Response response) throws IOException {
-        RestMethodInvoker restMethodInvoker = URI_MAPPING.get(request.getUri());
+
+        RestMethodInvoker restMethodInvoker = URI_MAPPING.get(request.getRequestURI());
         try {
             final Object returnValue = restMethodInvoker.invoke(request, response);
             String jsonString = JSON.toJSONString(returnValue);

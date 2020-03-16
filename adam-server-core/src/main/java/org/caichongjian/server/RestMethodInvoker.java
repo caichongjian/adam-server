@@ -1,5 +1,11 @@
 package org.caichongjian.server;
 
+import org.caichongjian.server.http.Request;
+import org.caichongjian.server.http.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -12,14 +18,17 @@ import java.lang.reflect.Method;
 public class RestMethodInvoker {
     private Method method;
     private Object instance;
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestMethodInvoker.class);
 
     public RestMethodInvoker(Method method, Object instance) {
         this.method = method;
         this.instance = instance;
     }
 
-    public Object invoke(Request request, Response response) throws InvocationTargetException, IllegalAccessException {
+    public Object invoke(Request request, Response response) throws InvocationTargetException, IllegalAccessException, IOException {
         // TODO 考虑请求参数等情况
+        String requestBody = request.readRequestBodyAsString();
+        LOGGER.debug(requestBody);
         return method.invoke(instance);
     }
 }

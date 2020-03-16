@@ -1,5 +1,8 @@
 package org.caichongjian.server;
 
+import org.caichongjian.server.http.Request;
+import org.caichongjian.server.http.Response;
+
 import java.io.IOException;
 
 public class StaticResourceProcessor {
@@ -12,6 +15,6 @@ public class StaticResourceProcessor {
      * @throws IOException if an I/O error occurs
      */
     public void process(Request request, Response response) throws IOException {
-        response.sendStaticResource(request.getUri());
+        response.sendStaticResource(request.getRequestURI());
     }
 }

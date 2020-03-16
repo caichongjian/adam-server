@@ -1,7 +1,8 @@
-package org.caichongjian.server;
+package org.caichongjian.server.http;
 
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
+import org.caichongjian.server.ApplicationContext;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -1,7 +1,7 @@
 package org.caichongjian.example;
 
 import org.caichongjian.annotations.MiniControllerScan;
-import org.caichongjian.server.AdamServerApplication;
+import org.caichongjian.server.startup.AdamServerApplication;
 
 /**
  * 启动类示例
