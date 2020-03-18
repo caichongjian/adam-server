@@ -110,6 +110,10 @@ public class Request implements MiniHttpServletRequest {
         });
     }
 
+    public String getRequestBodyString() {
+        return requestBodyString;
+    }
+
     @Override
     public Cookie[] getCookies() {
         return cookies;
