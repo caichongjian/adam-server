@@ -4,7 +4,8 @@ import javax.servlet.http.Cookie;
 import java.util.Enumeration;
 
 /**
- * javax.servlet-api的HttpServletRequest需要实现的方法太多了，简易服务器小国寡民，自定义简易版的接口
+ * javax.servlet-api的HttpServletRequest需要实现的方法太多了。
+ * 简易服务器不会有真实用户，没必要实现那么多方法，自定义简易版的接口
  */
 public interface MiniHttpServletRequest extends MiniServletRequest {
 

@@ -4,9 +4,31 @@ import java.util.Enumeration;
 import java.util.Map;
 
 /**
- * javax.servlet-api的ServletRequest需要实现的方法太多了，简易服务器小国寡民，自定义简易版的接口
+ * javax.servlet-api的ServletRequest需要实现的方法太多了。
+ * 简易服务器不会有真实用户，没必要实现那么多方法，自定义简易版的接口
  */
 public interface MiniServletRequest {
+
+    /**
+     * Returns the length, in bytes, of the request body and made available by
+     * the input stream, or -1 if the length is not known ir is greater than
+     * Integer.MAX_VALUE. For HTTP servlets,
+     * same as the value of the CGI variable CONTENT_LENGTH.
+     *
+     * @return an integer containing the length of the request body or -1 if
+     * the length is not known or is greater than Integer.MAX_VALUE.
+     */
+    int getContentLength();
+
+    /**
+     * Returns the MIME type of the body of the request, or
+     * <code>null</code> if the type is not known. For HTTP servlets,
+     * same as the value of the CGI variable CONTENT_TYPE.
+     *
+     * @return a <code>String</code> containing the name of the MIME type
+     * of the request, or null if the type is not known
+     */
+    String getContentType();
 
     /**
      * Returns the value of a request parameter as a <code>String</code>,

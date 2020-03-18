@@ -1,6 +1,6 @@
 package org.caichongjian.server.http;
 
-import org.apache.commons.lang3.ArrayUtils;
+import com.google.common.base.Preconditions;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class RequestStream implements Closeable {
 
     private InputStream socketInputStream;
 
-    public static final int BUFFER_SIZE = 64;
+    public static final int BUFFER_SIZE = 128;
 
     /**
      * 读取请求行和请求头时，如果读取过量(将请求体的一小部分也从socketInputStream中读出来了)，将过量的部分缓存到这里
@@ -48,10 +48,9 @@ public class RequestStream implements Closeable {
 
         // 存在请求体时会有读取过量的情况，需要处理一下
         final int headersEndIndex = sb.indexOf("\r\n\r\n");
-        final int bodyBytesStartIndex = (headersEndIndex + 4) % BUFFER_SIZE;
-        final int bodyBufferLength = bytesRead - bodyBytesStartIndex;
-        if (bodyBufferLength > 0) {
-            bodyBuffer = new byte[bodyBufferLength];
+        final int bodyBytesStartIndex = ((headersEndIndex + 3) % BUFFER_SIZE) + 1;
+        bodyBuffer = new byte[bytesRead - bodyBytesStartIndex]; // 即使没读取过量也生成一个空数组，防空指针并提高代码可读性
+        if (bodyBuffer.length > 0) {
             System.arraycopy(lineAndHeadersBuffer, bodyBytesStartIndex, bodyBuffer, 0, bodyBuffer.length);
         }
         return sb.substring(0, headersEndIndex);
@@ -65,16 +64,25 @@ public class RequestStream implements Closeable {
      */
     public byte[] readRequestBody(int contentLength) throws IOException {
 
-        if (ArrayUtils.isEmpty(bodyBuffer)) {
-            return socketInputStream.readNBytes(contentLength);
+        final int lengthInBodyBuffer = bodyBuffer.length;
+        final int lengthInSocketStream = contentLength - lengthInBodyBuffer;
+
+        Preconditions.checkState(lengthInSocketStream >= 0, "Invalid request.");
+
+        if (lengthInSocketStream == 0) {
+            return bodyBuffer;  // 不是很懂System.arraycopy()和new byte[contentLength]的性能开销。如果性能开销小可以为了代码可读性删除这一判断
         }
 
-        // 从socketInputStream中读取剩余的请求体，并与bodyBuffer拼到一起
-        int lengthInSocketStream = contentLength - bodyBuffer.length;
+        // 从socketInputStream中读取剩余的请求体
         final byte[] bytesInSocketStream = socketInputStream.readNBytes(lengthInSocketStream);
+        if (lengthInBodyBuffer == 0) {
+            return bytesInSocketStream;  // 不是很懂System.arraycopy()和new byte[contentLength]的性能开销。如果性能开销小可以为了代码可读性删除这一判断
+        }
+
+        // 将从socketInputStream中读取剩余的请求体与bodyBuffer拼到一起
         byte[] requestContentBytes = new byte[contentLength];
-        System.arraycopy(bodyBuffer, 0, requestContentBytes, 0, bodyBuffer.length);
-        System.arraycopy(bytesInSocketStream, 0, requestContentBytes, bodyBuffer.length, lengthInSocketStream);
+        System.arraycopy(bodyBuffer, 0, requestContentBytes, 0, lengthInBodyBuffer);
+        System.arraycopy(bytesInSocketStream, 0, requestContentBytes, lengthInBodyBuffer, lengthInSocketStream);
         return requestContentBytes;
     }
 

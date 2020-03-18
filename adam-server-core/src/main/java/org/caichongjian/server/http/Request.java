@@ -1,8 +1,12 @@
 package org.caichongjian.server.http;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
+import com.google.common.net.HttpHeaders;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.caichongjian.api.MiniHttpServletRequest;
 import org.slf4j.Logger;
@@ -18,11 +22,14 @@ public class Request implements MiniHttpServletRequest {
     private RequestStream requestStream;
     private String content;
     private Map<String, String> headers = new LinkedHashMap<>();
+    private ListMultimap<String, String> parameters = ArrayListMultimap.create();
     private String requestURI;
     private String method;
     private Cookie[] cookies;
     private String queryString;
+    private String requestBodyString;
     private static final Logger LOGGER = LoggerFactory.getLogger(Request.class);
+    private static final Splitter AMP_SPLITTER = Splitter.on("&").omitEmptyStrings();
 
     public Request(RequestStream requestStream) {
         this.requestStream = requestStream;
@@ -81,15 +88,26 @@ public class Request implements MiniHttpServletRequest {
         }
     }
 
-    public String readRequestBodyAsString() throws IOException {
+    public String readRequestBodyAsString(int contentLength) throws IOException {
 
-        int contentLength = MapUtils.getIntValue(headers, "Content-Length", 0);
-        if (contentLength == 0) {
-            return "";
-        }
         final byte[] bytes = requestStream.readRequestBody(contentLength);
-        // TODO 考虑中文字符问题
-        return new String(bytes);
+        // java 11的new String()貌似会按照System.getProperty("file.encoding")指定的字符集来解码，目前没测出中文乱码问题
+        requestBodyString = new String(bytes);
+        return requestBodyString;
+    }
+
+    public void parseParameter(String parameterString) {
+
+        if (StringUtils.isBlank(parameterString)) {
+            return;
+        }
+
+        AMP_SPLITTER.split(parameterString).forEach(s -> {
+            int equalsSignIndex = s.indexOf('=');
+            String name = s.substring(0, equalsSignIndex);
+            String value = s.substring(equalsSignIndex + 1);
+            parameters.put(name, value);
+        });
     }
 
     @Override
@@ -99,7 +117,7 @@ public class Request implements MiniHttpServletRequest {
 
     @Override
     public String getHeader(String name) {
-        return headers.get(name);
+        return ObjectUtils.defaultIfNull(headers.get(name), headers.get(name.toLowerCase()));
     }
 
     @Override
@@ -123,22 +141,39 @@ public class Request implements MiniHttpServletRequest {
     }
 
     @Override
+    public int getContentLength() {
+        return MapUtils.getIntValue(headers, HttpHeaders.CONTENT_LENGTH, 0);
+    }
+
+    @Override
+    public String getContentType() {
+        return getHeader(HttpHeaders.CONTENT_TYPE);
+    }
+
+    @Override
     public String getParameter(String name) {
-        return null;
+        return Optional.ofNullable(parameters.get(name))
+                .flatMap(values -> values.stream().findFirst())
+                .orElse(null);
     }
 
     @Override
     public Enumeration<String> getParameterNames() {
-        return null;
+        return Collections.enumeration(parameters.keySet());
     }
 
     @Override
     public String[] getParameterValues(String name) {
-        return new String[0];
+        return Optional.ofNullable(parameters.get(name))
+                .map(list -> Iterables.toArray(list, String.class))
+                .orElse(new String[0]);
     }
 
     @Override
     public Map<String, String[]> getParameterMap() {
-        return null;
+        Map<String, String[]> result = new HashMap<>();
+        parameters.asMap()
+                .forEach((key, collection) -> result.put(key, Iterables.toArray(collection, String.class)));
+        return result;
     }
 }
