@@ -21,7 +21,7 @@ public class AdamServerApplication {
         final MiniControllerScan annotation = primarySource.getAnnotation(MiniControllerScan.class);
 
         if (annotation == null) {
-            LOGGER.error("请在启动类加上MiniControllerScan注解");
+            LOGGER.error("请在启动类加上@MiniControllerScan注解");
             System.exit(1);
         }
 
@@ -38,7 +38,7 @@ public class AdamServerApplication {
                     }
                 }
             } catch (Exception | NoClassDefFoundError e) {
-                LOGGER.error("扫描MiniControllerScan失败", e);
+                LOGGER.error("扫描MiniController失败", e);
                 System.exit(1);
             }
         }

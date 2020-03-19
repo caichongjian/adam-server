@@ -146,7 +146,7 @@ public class Request implements MiniHttpServletRequest {
 
     @Override
     public int getContentLength() {
-        return MapUtils.getIntValue(headers, HttpHeaders.CONTENT_LENGTH, 0);
+        return MapUtils.getIntValue(headers, HttpHeaders.CONTENT_LENGTH, -1);
     }
 
     @Override

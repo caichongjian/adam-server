@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.caichongjian.annotations.MiniRequestBody;
 import org.caichongjian.api.MiniHttpServletRequest;
 import org.caichongjian.api.MiniHttpServletResponse;
-import org.caichongjian.server.http.Constants;
 import org.caichongjian.server.http.Request;
 import org.caichongjian.server.http.Response;
 import org.slf4j.Logger;
@@ -85,7 +84,7 @@ public class RestMethodInvoker {
         if (contentLength > 0 && shouldReadBodyAsString(contentType)) {
             String requestBody = request.readRequestBodyAsString(contentLength);
             LOGGER.debug(requestBody);
-            if (contentTypeEquals(contentType, Constants.APPLICATION_FORM_URLENCODED)) {
+            if (contentTypeEquals(contentType, Constants.ContentType.APPLICATION_FORM_URLENCODED)) {
                 request.parseParameter(requestBody);
             }
         }
@@ -105,7 +104,7 @@ public class RestMethodInvoker {
             } else if (clazz.isArray()) {
                 String[] parameterStringArray = request.getParameterValues(parameterDefinition.getName());
                 parameters[i] = parseParameter(clazz, parameterStringArray);
-            } else if (contentTypeEquals(contentType, Constants.APPLICATION_JSON) && parameterDefinition.getAnnotation(MiniRequestBody.class) != null) {
+            } else if (contentTypeEquals(contentType, Constants.ContentType.APPLICATION_JSON) && parameterDefinition.getAnnotation(MiniRequestBody.class) != null) {
                 parameters[i] = Optional.ofNullable(request.getRequestBodyString())
                         .map(s -> JSON.parseObject(s, clazz))
                         .orElse(null);
@@ -154,8 +153,8 @@ public class RestMethodInvoker {
      * @return 是否需要以字符串读取请求体
      */
     private boolean shouldReadBodyAsString(String contentType) {
-        return contentTypeEquals(contentType, Constants.APPLICATION_FORM_URLENCODED) ||
-                contentTypeEquals(contentType, Constants.APPLICATION_JSON);
+        return contentTypeEquals(contentType, Constants.ContentType.APPLICATION_FORM_URLENCODED) ||
+                contentTypeEquals(contentType, Constants.ContentType.APPLICATION_JSON);
     }
 
     private boolean contentTypeEquals(String contentType, String expected) {

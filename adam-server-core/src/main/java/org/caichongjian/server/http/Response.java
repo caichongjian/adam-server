@@ -1,35 +1,44 @@
 package org.caichongjian.server.http;
 
-import com.google.common.base.Strings;
+import com.google.common.base.Preconditions;
+import com.google.common.net.HttpHeaders;
 import org.apache.commons.lang3.StringUtils;
+import org.caichongjian.api.MiniHttpServletResponse;
 import org.caichongjian.server.ApplicationContext;
+import org.caichongjian.server.Constants;
 
+import javax.servlet.http.Cookie;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.*;
 
-public class Response {
+public class Response implements MiniHttpServletResponse {
 
     private OutputStream outputStream;
-    public static final String OK_HEADER_TEMPLATE = "HTTP/1.1 200 OK\r\n" +
-            "Content-Type: text/html\r\n" +
-            "Content-Length: %s\r\n" +
-            "\r\n";
+    private Map<String, String> headers = new LinkedHashMap<>();
+    private List<Cookie> cookies = new LinkedList<>();
+    private ResponseLine responseLine = ResponseLine.OK;
 
-    public static final String DEFAULT_INDEX_TEMPLATE = OK_HEADER_TEMPLATE + "<h1>Hello World!!!</h1>";
+    private enum ResponseLine {
+        OK("HTTP/1.1 200 OK"),
+        NOT_FOUND("HTTP/1.1 404 File Not Found");
+        private String text;
 
-    public static final String JSON_OK_HEADER_TEMPLATE = "HTTP/1.1 200 OK\r\n" +
-            "Content-Type: application/json\r\n" +
-            "Content-Length: %s\r\n" +
-            "\r\n";
+        ResponseLine(String text) {
+            this.text = text;
+        }
 
-    public static final String NOT_FOUND_TEMPLATE = "HTTP/1.1 404 File Not Found\r\n" +
-            "Content-Type: text/html\r\n" +
-            "Content-Length: 23\r\n" +
-            "\r\n" +
-            "<h1>File Not Found</h1>";
+        public String getText() {
+            return text;
+        }
+    }
+
+    public static final String DEFAULT_INDEX_TEMPLATE = "<h1>Hello World!!!</h1>";
+
+    public static final String NOT_FOUND_TEMPLATE = "<h1>Page Not Found</h1>";
 
     public Response(OutputStream outputStream) {
         this.outputStream = outputStream;
@@ -44,8 +53,11 @@ public class Response {
     public void sendJsonString(String jsonString) throws IOException {
         // TODO 考虑中文字符
         final byte[] bytes = jsonString.getBytes();
-        String responseHeader = Strings.lenientFormat(JSON_OK_HEADER_TEMPLATE, bytes.length);
-        outputStream.write(responseHeader.getBytes());
+        setContentType(Constants.ContentType.APPLICATION_JSON);
+        setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length));
+
+        String responseLineAndHeader = responseLineAndHeadersToString();
+        outputStream.write(responseLineAndHeader.getBytes());
         outputStream.write(bytes);
     }
 
@@ -59,15 +71,82 @@ public class Response {
 
         uri = (StringUtils.isBlank(uri) || "/".equals(uri)) ? "index.html" : uri;
 
+        byte[] bytes;
         final Path path = Paths.get(ApplicationContext.getInstance().getWebRootPath(), uri);
         if (Files.exists(path)) {
-            final byte[] bytes = Files.readAllBytes(path);
-            String responseHeader = Strings.lenientFormat(OK_HEADER_TEMPLATE, bytes.length);
-            outputStream.write(responseHeader.getBytes());
-            outputStream.write(bytes);
+            bytes = Files.readAllBytes(path);
         } else {
             String template = "index.html".equals(uri) ? DEFAULT_INDEX_TEMPLATE : NOT_FOUND_TEMPLATE;
-            outputStream.write(template.getBytes());
+            bytes = template.getBytes();
+            responseLine = ResponseLine.NOT_FOUND;
         }
+        setContentType(Constants.ContentType.TEXT_HTML);
+        setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length));
+        String responseLineAndHeader = responseLineAndHeadersToString();
+        outputStream.write(responseLineAndHeader.getBytes());
+        outputStream.write(bytes);
+    }
+
+    /**
+     * 将响应行和响应头从内部格式转成字符串
+     *
+     * @return 字符串格式的响应行和响应头
+     */
+    private String responseLineAndHeadersToString() {
+
+        StringBuilder sb = new StringBuilder(128);
+        sb.append(responseLine.getText()).append("\r\n");
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
+        }
+        for (Cookie cookie : cookies) {
+            sb.append("Set-Cookie: ").append(cookie.getName()).append("=").append(cookie.getValue()).append("; ");
+            if (cookie.getMaxAge() != -1) {
+                sb.append("Max-Age=").append(cookie.getMaxAge()).append("; "); // 不考虑兼容Expires了
+            }
+            Optional.ofNullable(cookie.getDomain()).ifPresent(domain -> sb.append("Domain=").append(domain).append("; "));
+            Optional.ofNullable(cookie.getPath()).ifPresent(path -> sb.append("Path=").append(path).append("; "));
+            if (cookie.getSecure()) {
+                sb.append("Secure; ");
+            }
+            if (cookie.isHttpOnly()) {
+                sb.append("HttpOnly; ");
+            }
+            sb.delete(sb.length() - 2, sb.length());
+            sb.append("\r\n");
+        }
+        sb.append("\r\n");
+        return sb.toString();
+    }
+
+    @Override
+    public void addCookie(Cookie cookie) {
+        Preconditions.checkNotNull(cookie, "参数[cookie]不能为null");
+        // cookie中的特殊字符需不需要server来特别处理？
+        cookies.add(cookie);
+    }
+
+    @Override
+    public void setHeader(String name, String value) {
+        Preconditions.checkNotNull(name, "参数[name]不能为null");
+        Preconditions.checkNotNull(value, "参数[value]不能为null");
+        headers.put(name, value);
+    }
+
+    @Override
+    public String getHeader(String name) {
+        Preconditions.checkNotNull(name, "参数[name]不能为null");
+        return headers.get(name);
+    }
+
+    @Override
+    public String getContentType() {
+        return getHeader(HttpHeaders.CONTENT_TYPE);
+    }
+
+    @Override
+    public void setContentType(String type) {
+        Preconditions.checkNotNull(type, "参数[type]不能为null");
+        setHeader(HttpHeaders.CONTENT_TYPE, type);
     }
 }

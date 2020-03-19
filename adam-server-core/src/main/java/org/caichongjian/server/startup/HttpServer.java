@@ -2,6 +2,7 @@ package org.caichongjian.server.startup;
 
 import org.caichongjian.server.RestProcessor;
 import org.caichongjian.server.StaticResourceProcessor;
+import org.caichongjian.server.Constants;
 import org.caichongjian.server.http.Request;
 import org.caichongjian.server.http.RequestStream;
 import org.caichongjian.server.http.Response;
@@ -16,9 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HttpServer {
 
-    public static final String EXIT_COMMAND = "EXIT";
-
-    public static final int PORT = 8888;
+    public static final String EXIT_URI = "/EXIT";
 
     public static final Logger LOGGER = LoggerFactory.getLogger(HttpServer.class);
 
@@ -26,7 +25,7 @@ public class HttpServer {
 
     public static void start() {
 
-        try (ServerSocket ss = new ServerSocket(PORT)) {
+        try (ServerSocket ss = new ServerSocket(Constants.Server.PORT)) {
 
             LOGGER.info("starting the server....");
 
@@ -64,7 +63,7 @@ public class HttpServer {
                 processor.process(request, response);
             }
 
-            runningFlag.set(!EXIT_COMMAND.equals(request.getRequestURI()));
+            runningFlag.set(!EXIT_URI.equals(request.getRequestURI()));
 
         } catch (IOException e) {
             LOGGER.error("an I/O error occurs: ", e);
