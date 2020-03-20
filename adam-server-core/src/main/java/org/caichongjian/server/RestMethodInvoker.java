@@ -1,7 +1,6 @@
 package org.caichongjian.server;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.caichongjian.annotations.MiniRequestBody;
 import org.caichongjian.api.MiniHttpServletRequest;
@@ -110,7 +109,8 @@ public class RestMethodInvoker {
                         .orElse(null);
             } else {
                 String parameterString = request.getParameter(parameterDefinition.getName());
-                parameters[i] = parseParameter(clazz, parameterString);
+                parameters[i] = Optional.ofNullable(parameterString)
+                        .map(str -> parseParameterFunction.apply(str, clazz)).orElse(null);
             }
         }
         return method.invoke(instance, parameters);
@@ -119,22 +119,13 @@ public class RestMethodInvoker {
     /**
      * 将参数转换成指定的类型
      *
-     * @param parameterStrings 字符串类型的参数或者参数的数组
+     * @param parameterStrings String类型的参数数组
      * @param clazz            需要转换成的类型
      * @return 转换后的对象
      */
-    private Object parseParameter(Class<?> clazz, String... parameterStrings) {
+    private Object parseParameter(Class<?> clazz, String[] parameterStrings) {
 
-        if (ArrayUtils.isEmpty(parameterStrings)) {
-            return null;
-        }
-
-        if (parameterStrings.length == 1) {
-            return Optional.ofNullable(parameterStrings[0])
-                    .map(str -> parseParameterFunction.apply(str, clazz)).orElse(null);
-        }
-
-        return Optional.of(parameterStrings)
+        return Optional.ofNullable(parameterStrings)
                 .map(strings -> {
                     final Class<?> componentType = clazz.getComponentType();
                     Object parameterArray = Array.newInstance(componentType, strings.length);
@@ -143,7 +134,7 @@ public class RestMethodInvoker {
                         Array.set(parameterArray, i, parseParameterFunction.apply(parameterString, componentType));
                     }
                     return parameterArray;
-                }).orElseThrow();
+                }).orElse(Array.newInstance(clazz.getComponentType(), 0));
     }
 
     /**

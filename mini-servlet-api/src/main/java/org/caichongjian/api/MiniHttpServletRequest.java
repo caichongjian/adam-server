@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 1997-2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2004 The Apache Software Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.caichongjian.api;
 
 import javax.servlet.http.Cookie;
@@ -6,14 +23,19 @@ import java.util.Enumeration;
 /**
  * javax.servlet-api的HttpServletRequest需要实现的方法太多了。
  * 简易服务器不会有真实用户，没必要实现那么多方法，所以自定义了简易版的接口。
- * 各个接口方法的定义比起javax.servlet-api来略有不同。
+ * 接口方法的数量比起javax.servlet-api来少了很多。
+ * 如果你觉得adam-server对你有帮助，请去下面的链接点★Star
  * <p>
  * There are too many methods that javax.servlet-api's HttpServletRequest needs to implement.
  * Simple server will not have real users, there is no need to implement so many methods, so the interface of the simple version is customized.
- * The definition of each interface method is slightly different than javax.servlet-api.
+ * The number of interface methods is much less than javax.servlet-api.
+ * If you think adam-server is helpful to you, please go to the link below and click ★Star
+ *
+ * @author 	Various
  *
  * @see javax.servlet.http.HttpServletRequest
  * @see javax.servlet.ServletRequest
+ * @see https://github.com/oracle
  */
 public interface MiniHttpServletRequest extends MiniServletRequest {
 
@@ -107,11 +129,14 @@ public interface MiniHttpServletRequest extends MiniServletRequest {
      * <tr><td>HEAD /xyz?a=b HTTP/1.1<td><td>/xyz
      * </table>
      *
+     * <p>To reconstruct an URL with a scheme and host, use
+     * {@link HttpUtils#getRequestURL}.
      *
      * @return		a <code>String</code> containing
      *			the part of the URL from the
      *			protocol name up to the query string
      *
+     * @see     HttpUtils#getRequestURL
      */
     String getRequestURI();
 }
