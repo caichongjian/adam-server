@@ -1,10 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>index html</title>
+    <script>
+        function postJson(url, params) {
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", url, true);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.onload = function (e) {
+            if (xhr.readyState === 4) {
+              if (xhr.status === 200) {
+                console.log(xhr.responseText);
+                document.getElementById("responseText").innerHTML=xhr.responseText;
+              } else {
+                console.error(xhr.statusText);
+              }
+            }
+          };
+          xhr.onerror = function (e) {
+            console.error(xhr.statusText);
+          };
+          xhr.send(JSON.stringify(params));
+        }
+
+        function postForm(url, params) {
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", url, true);
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+          xhr.onload = function (e) {
+            if (xhr.readyState === 4) {
+              if (xhr.status === 200) {
+                console.log(xhr.responseText);
+                document.getElementById("responseText").innerHTML=xhr.responseText;
+              } else {
+                console.error(xhr.statusText);
+              }
+            }
+          };
+          xhr.onerror = function (e) {
+            console.error(xhr.statusText);
+          };
+          xhr.send(params);
+        }
+
+        function getData(url) {
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", url, true);
+          xhr.onload = function (e) {
+            if (xhr.readyState === 4) {
+              if (xhr.status === 200) {
+                console.log(xhr.responseText);
+                document.getElementById("responseText").innerHTML=xhr.responseText;
+              } else {
+                console.error(xhr.statusText);
+              }
+            }
+          };
+          xhr.onerror = function (e) {
+            console.error(xhr.statusText);
+          };
+          xhr.send(null);
+        }
+    </script>
 </head>
 <body>
-    <h1>index</h1>
+    <div><h1>This is a page for testing adam-server</h1></div>
+    <div>
+        <button type="button" onclick="getData('/example/hello?id=1&name=蔡崇建')">hello</button>
+        <button type="button" onclick="postForm('/example/hi?name=Adam&message=hi', 'ids=1&ids=2&ids=3&ids=4&operation=insert')">hi</button>
+        <button type="button" onclick="postForm('/example/parameter/array', 'ids=1&ids=2&ids=3&ids=4')">parameter/array</button>
+        <button type="button" onclick="postJson('/example/json', {id: 1232131, name: '蔡崇建'})">json</button>
+        <button type="button" onclick="getData('/example/cookie')">cookie</button>
+    </div>
+    <div id="responseText" style="padding-top: 15px"><h2>View response text</h2></div>
 </body>
 </html>
