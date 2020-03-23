@@ -96,7 +96,7 @@
     </appender>
 
     <!--根root logger-->
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="DEBUG" />
         <appender-ref ref="INFO" />
         <appender-ref ref="ERROR" />

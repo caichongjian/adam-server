@@ -26,6 +26,7 @@ public final class Constants {
         }
 
         public static final int PORT = 8888;
+        public static final int THREAD_POOL_SIZE = 20;
 
     }
 
