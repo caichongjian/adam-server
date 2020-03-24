@@ -40,9 +40,7 @@ public class Request implements MiniHttpServletRequest {
      */
     public void parse() throws IOException {
         content = requestStream.readRequestLineAndHeaders();
-        LOGGER.debug("请求头原始内容为： {}", content);
         parseHeaders();
-        LOGGER.debug("解析后的请求头为： {}", headers);
     }
 
     private void parseHeaders() {

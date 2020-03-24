@@ -7,8 +7,6 @@ import org.caichongjian.api.MiniHttpServletRequest;
 import org.caichongjian.api.MiniHttpServletResponse;
 import org.caichongjian.server.http.Request;
 import org.caichongjian.server.http.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -32,7 +30,31 @@ public class RestMethodInvoker {
 
     private Method method;
     private Object instance;
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestMethodInvoker.class);
+    private Argument[] argumentDefinitions;
+
+    private static final class Argument {
+        private String name;
+        private Class<?> type;
+        private boolean isRequestBodyArgument;
+
+        public Argument(String name, Class<?> type, boolean isRequestBodyArgument) {
+            this.name = name;
+            this.type = type;
+            this.isRequestBodyArgument = isRequestBodyArgument;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Class<?> getType() {
+            return type;
+        }
+
+        public boolean isRequestBodyArgument() {
+            return isRequestBodyArgument;
+        }
+    }
 
     /**
      * 参数转换函数。输入字符串和需要转换的类型，返回转换后的对象
@@ -68,6 +90,14 @@ public class RestMethodInvoker {
     public RestMethodInvoker(Method method, Object instance) {
         this.method = method;
         this.instance = instance;
+
+        // 方法的各个参数的名称、类型、是否请求体参数数据没必要每次请求过来时都通过反射获取，将它们缓存到arguments这一成员变量中,从而提高性能
+        final Parameter[] parameterDefinitions = method.getParameters();
+        argumentDefinitions = new Argument[parameterDefinitions.length];
+        for (int i = 0; i < parameterDefinitions.length; i++) {
+            final Parameter definition = parameterDefinitions[i];
+            argumentDefinitions[i] = new Argument(definition.getName(), definition.getType(), definition.getAnnotation(MiniRequestBody.class) != null);
+        }
     }
 
     public Object invoke(Request request, Response response) throws InvocationTargetException, IllegalAccessException, IOException {
@@ -82,33 +112,31 @@ public class RestMethodInvoker {
         final int contentLength = request.getContentLength();
         if (contentLength > 0 && shouldReadBodyAsString(contentType)) {
             String requestBody = request.readRequestBodyAsString(contentLength);
-            LOGGER.debug(requestBody);
             if (contentTypeEquals(contentType, Constants.ContentType.APPLICATION_FORM_URLENCODED)) {
                 request.parseParameter(requestBody);
             }
         }
 
         // 根据方法定义中的参数列表，从request中获取相应的参数
-        final Parameter[] parameterDefinitions = method.getParameters();
-        final Object[] parameters = new Object[parameterDefinitions.length];
-        for (int i = 0; i < parameterDefinitions.length; i++) {
+        final Object[] parameters = new Object[argumentDefinitions.length];
+        for (int i = 0; i < argumentDefinitions.length; i++) {
 
-            Parameter parameterDefinition = parameterDefinitions[i];
-            Class<?> clazz = parameterDefinition.getType();
+            Argument argumentDefinition = argumentDefinitions[i];
+            Class<?> clazz = argumentDefinition.getType();
 
             if (clazz == MiniHttpServletRequest.class) {
                 parameters[i] = request;
             } else if (clazz == MiniHttpServletResponse.class) {
                 parameters[i] = response;
             } else if (clazz.isArray()) {
-                String[] parameterStringArray = request.getParameterValues(parameterDefinition.getName());
+                String[] parameterStringArray = request.getParameterValues(argumentDefinition.getName());
                 parameters[i] = parseParameter(clazz, parameterStringArray);
-            } else if (contentTypeEquals(contentType, Constants.ContentType.APPLICATION_JSON) && parameterDefinition.getAnnotation(MiniRequestBody.class) != null) {
+            } else if (contentTypeEquals(contentType, Constants.ContentType.APPLICATION_JSON) && argumentDefinition.isRequestBodyArgument()) {
                 parameters[i] = Optional.ofNullable(request.getRequestBodyString())
                         .map(s -> JSON.parseObject(s, clazz))
                         .orElse(null);
             } else {
-                String parameterString = request.getParameter(parameterDefinition.getName());
+                String parameterString = request.getParameter(argumentDefinition.getName());
                 parameters[i] = Optional.ofNullable(parameterString)
                         .map(str -> parseParameterFunction.apply(str, clazz)).orElse(null);
             }
