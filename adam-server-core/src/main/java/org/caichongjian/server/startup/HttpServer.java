@@ -37,7 +37,7 @@ public class HttpServer {
 
         try (ServerSocket ss = new ServerSocket(Constants.Server.PORT)) {
 
-            LOGGER.info("starting the server....");
+            LOGGER.info("服务器已启动，请访问http://localhost:{}", Constants.Server.PORT);
 
             while (runningFlag.get()) {
                 final Socket socket = ss.accept();

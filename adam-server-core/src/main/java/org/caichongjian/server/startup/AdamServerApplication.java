@@ -17,6 +17,10 @@ public class AdamServerApplication {
 
     public static void run(Class<?> primarySource) {
 
+        LOGGER.info("starting the server....");
+
+        LOGGER.info("开始扫描RestController注解....");
+
         // 根据启动类上注解提供的信息，扫描Controller
         final MiniControllerScan annotation = primarySource.getAnnotation(MiniControllerScan.class);
 

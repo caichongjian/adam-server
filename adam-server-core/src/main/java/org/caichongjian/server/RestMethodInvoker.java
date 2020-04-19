@@ -57,7 +57,13 @@ public class RestMethodInvoker {
     }
 
     /**
-     * 参数转换函数。输入字符串和需要转换的类型，返回转换后的对象
+     * <p>参数转换函数,用于将String类型的http请求参数转换成指定的类型</p>
+     * <p>客户端(浏览器)传递的参数经过初次解析后是String类型，而controller参数列表中
+     * 则可能是Integer, Long, BigDecimal类型，因此需要有个函数进行参数类型的转换</p>
+     * <p></p>
+     *
+     * <p>param str String类型的http请求参数</p>
+     * <p>param clazz 需要转换成的类型,如Integer.class, Long.class等等</p>
      */
     private static final BiFunction<String, Class<?>, Object> parseParameterFunction = (str, clazz) -> {
         Object parameter = null;
@@ -130,7 +136,7 @@ public class RestMethodInvoker {
                 parameters[i] = response;
             } else if (clazz.isArray()) {
                 String[] parameterStringArray = request.getParameterValues(argumentDefinition.getName());
-                parameters[i] = parseParameter(clazz, parameterStringArray);
+                parameters[i] = parseParameter(parameterStringArray, clazz);
             } else if (contentTypeEquals(contentType, Constants.ContentType.APPLICATION_JSON) && argumentDefinition.isRequestBodyArgument()) {
                 parameters[i] = Optional.ofNullable(request.getRequestBodyString())
                         .map(s -> JSON.parseObject(s, clazz))
@@ -145,13 +151,15 @@ public class RestMethodInvoker {
     }
 
     /**
-     * 将参数转换成指定的类型
+     * <p>将String[]类型的http请求参数转换成指定的类型</p>
+     * <p>客户端(浏览器)传递的参数经过初次解析后是String[]类型，而controller参数列表中
+     * 则可能是Integer[], Long[], BigDecimal[]类型，因此需要有个方法进行参数类型的转换</p>
      *
-     * @param parameterStrings String类型的参数数组
-     * @param clazz            需要转换成的类型
+     * @param parameterStrings String[]类型的http请求参数
+     * @param clazz            需要转换成的类型,如Integer[].class, Long[].class等等
      * @return 转换后的对象
      */
-    private Object parseParameter(Class<?> clazz, String[] parameterStrings) {
+    private Object parseParameter(String[] parameterStrings, Class<?> clazz) {
 
         return Optional.ofNullable(parameterStrings)
                 .map(strings -> {

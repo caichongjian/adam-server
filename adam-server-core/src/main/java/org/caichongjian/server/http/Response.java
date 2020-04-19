@@ -2,6 +2,7 @@ package org.caichongjian.server.http;
 
 import com.google.common.base.Preconditions;
 import com.google.common.net.HttpHeaders;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.caichongjian.api.MiniHttpServletResponse;
 import org.caichongjian.server.ApplicationContext;
@@ -10,9 +11,6 @@ import org.caichongjian.server.Constants;
 import javax.servlet.http.Cookie;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class Response implements MiniHttpServletResponse {
@@ -35,8 +33,6 @@ public class Response implements MiniHttpServletResponse {
             return text;
         }
     }
-
-    public static final String DEFAULT_INDEX_TEMPLATE = "<h1>Hello World!!!</h1>";
 
     public static final String NOT_FOUND_TEMPLATE = "<h1>Page Not Found</h1>";
 
@@ -67,17 +63,13 @@ public class Response implements MiniHttpServletResponse {
      * @param uri 静态资源的相对路径
      * @throws IOException IO异常
      */
-    public void sendStaticResource(String uri) throws IOException {
+    public void sendStaticResource(String uri) throws IOException{
 
         uri = (StringUtils.isBlank(uri) || "/".equals(uri)) ? "index.html" : uri;
 
-        byte[] bytes;
-        final Path path = Paths.get(ApplicationContext.getInstance().getWebRootPath(), uri);
-        if (Files.exists(path)) {
-            bytes = Files.readAllBytes(path);
-        } else {
-            String template = "index.html".equals(uri) ? DEFAULT_INDEX_TEMPLATE : NOT_FOUND_TEMPLATE;
-            bytes = template.getBytes();
+        byte[] bytes = ApplicationContext.getInstance().getStaticResource(uri);
+        if (ArrayUtils.isEmpty(bytes)) {
+            bytes = NOT_FOUND_TEMPLATE.getBytes();
             responseLine = ResponseLine.NOT_FOUND;
         }
         setContentType(Constants.ContentType.TEXT_HTML);
