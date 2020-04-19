@@ -27,6 +27,7 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <encoding>UTF-8</encoding>
                     <!-- 必须加上这个选项。加上后才能使用反射获取MiniRestController中定义的方法的参数名称 -->
                     <compilerArgument>-parameters</compilerArgument>
                 </configuration>

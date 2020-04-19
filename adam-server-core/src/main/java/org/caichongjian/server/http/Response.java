@@ -47,13 +47,13 @@ public class Response implements MiniHttpServletResponse {
      * @throws IOException IO异常
      */
     public void sendJsonString(String jsonString) throws IOException {
-        // TODO 考虑中文字符
-        final byte[] bytes = jsonString.getBytes();
+        // TODO 考虑其他的字符集
+        final byte[] bytes = StringToBytes(jsonString);
         setContentType(Constants.ContentType.APPLICATION_JSON);
         setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length));
 
         String responseLineAndHeader = responseLineAndHeadersToString();
-        outputStream.write(responseLineAndHeader.getBytes());
+        outputStream.write(StringToBytes(responseLineAndHeader)); // 响应头转
         outputStream.write(bytes);
     }
 
@@ -63,19 +63,19 @@ public class Response implements MiniHttpServletResponse {
      * @param uri 静态资源的相对路径
      * @throws IOException IO异常
      */
-    public void sendStaticResource(String uri) throws IOException{
+    public void sendStaticResource(String uri) throws IOException {
 
         uri = (StringUtils.isBlank(uri) || "/".equals(uri)) ? "index.html" : uri;
 
         byte[] bytes = ApplicationContext.getInstance().getStaticResource(uri);
         if (ArrayUtils.isEmpty(bytes)) {
-            bytes = NOT_FOUND_TEMPLATE.getBytes();
+            bytes = StringToBytes(NOT_FOUND_TEMPLATE);
             responseLine = ResponseLine.NOT_FOUND;
         }
         setContentType(Constants.ContentType.TEXT_HTML);
         setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length));
         String responseLineAndHeader = responseLineAndHeadersToString();
-        outputStream.write(responseLineAndHeader.getBytes());
+        outputStream.write(StringToBytes(responseLineAndHeader));
         outputStream.write(bytes);
     }
 
@@ -109,6 +109,10 @@ public class Response implements MiniHttpServletResponse {
         }
         sb.append("\r\n");
         return sb.toString();
+    }
+
+    private byte[] StringToBytes(String str) {
+        return str.getBytes(Constants.Server.DEFAULT_CHARSET);
     }
 
     @Override

@@ -16,7 +16,6 @@ import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
@@ -110,7 +109,7 @@ public class RestMethodInvoker {
 
         // 解析url的参数(静态资源不需要解析参数，所以解析参数代码放这里而不是和解析请求头代码放一起)
         Optional.ofNullable(request.getQueryString())
-                .map(queryString -> URLDecoder.decode(queryString, Charset.defaultCharset()))
+                .map(queryString -> URLDecoder.decode(queryString, Constants.Server.DEFAULT_CHARSET))
                 .ifPresent(request::parseParameter);
 
         // 解析请求体的参数

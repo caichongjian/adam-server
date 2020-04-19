@@ -1,5 +1,7 @@
 package org.caichongjian.server;
 
+import java.nio.charset.Charset;
+
 /**
  * 常量
  */
@@ -27,6 +29,7 @@ public final class Constants {
 
         public static final int PORT = 8888;
         public static final int THREAD_POOL_SIZE = 20;
+        public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
     }
 

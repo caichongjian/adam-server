@@ -9,6 +9,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.caichongjian.api.MiniHttpServletRequest;
+import org.caichongjian.server.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,8 +90,9 @@ public class Request implements MiniHttpServletRequest {
     public String readRequestBodyAsString(int contentLength) throws IOException {
 
         final byte[] bytes = requestStream.readRequestBody(contentLength);
-        // java 11的new String()貌似会按照System.getProperty("file.encoding")指定的字符集来解码，目前没测出中文乱码问题
-        requestBodyString = new String(bytes);
+        // java 11的new String()貌似会按照System.getProperty("file.encoding")指定的字符集来解码，在Ubuntu下测试没有问题
+        // Windows 10中文版System.getProperty("file.encoding")拿到的是GBK，需要改成UTF-8
+        requestBodyString = new String(bytes, Constants.Server.DEFAULT_CHARSET);
         return requestBodyString;
     }
 

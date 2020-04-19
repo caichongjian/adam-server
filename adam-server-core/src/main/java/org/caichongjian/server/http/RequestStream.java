@@ -42,7 +42,7 @@ public class RequestStream implements Closeable {
         do {
             bytesRead = socketInputStream.read(lineAndHeadersBuffer, 0, BUFFER_SIZE);
             for (int j = 0; j < bytesRead; j++) {
-                sb.append((char) lineAndHeadersBuffer[j]);
+                sb.append((char) lineAndHeadersBuffer[j]); // 应该不会有人在请求头里直接放汉字吧？？？
             }
         } while (sb.indexOf("\r\n\r\n") == -1);
 
