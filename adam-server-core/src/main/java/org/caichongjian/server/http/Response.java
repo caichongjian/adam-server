@@ -48,12 +48,12 @@ public class Response implements MiniHttpServletResponse {
      */
     public void sendJsonString(String jsonString) throws IOException {
         // TODO 考虑其他的字符集
-        final byte[] bytes = StringToBytes(jsonString);
+        final byte[] bytes = stringToBytes(jsonString);
         setContentType(Constants.ContentType.APPLICATION_JSON);
         setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length));
 
         String responseLineAndHeader = responseLineAndHeadersToString();
-        outputStream.write(StringToBytes(responseLineAndHeader)); // 响应头转
+        outputStream.write(stringToBytes(responseLineAndHeader)); // 响应头指定UTF-8是否有必要?
         outputStream.write(bytes);
     }
 
@@ -69,13 +69,13 @@ public class Response implements MiniHttpServletResponse {
 
         byte[] bytes = ApplicationContext.getInstance().getStaticResource(uri);
         if (ArrayUtils.isEmpty(bytes)) {
-            bytes = StringToBytes(NOT_FOUND_TEMPLATE);
+            bytes = stringToBytes(NOT_FOUND_TEMPLATE);
             responseLine = ResponseLine.NOT_FOUND;
         }
         setContentType(Constants.ContentType.TEXT_HTML);
         setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length));
         String responseLineAndHeader = responseLineAndHeadersToString();
-        outputStream.write(StringToBytes(responseLineAndHeader));
+        outputStream.write(stringToBytes(responseLineAndHeader));
         outputStream.write(bytes);
     }
 
@@ -111,7 +111,7 @@ public class Response implements MiniHttpServletResponse {
         return sb.toString();
     }
 
-    private byte[] StringToBytes(String str) {
+    private byte[] stringToBytes(String str) {
         return str.getBytes(Constants.Server.DEFAULT_CHARSET);
     }
 

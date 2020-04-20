@@ -90,8 +90,9 @@ public class Request implements MiniHttpServletRequest {
     public String readRequestBodyAsString(int contentLength) throws IOException {
 
         final byte[] bytes = requestStream.readRequestBody(contentLength);
-        // java 11的new String()貌似会按照System.getProperty("file.encoding")指定的字符集来解码，在Ubuntu下测试没有问题
-        // Windows 10中文版System.getProperty("file.encoding")拿到的是GBK，需要改成UTF-8
+        // java 11的new String()貌似会按照System.getProperty("file.encoding")指定的字符集来解码，在Ubuntu下直接使用new String(bytes)没有问题
+        // Windows 10中文版System.getProperty("file.encoding")拿到的是GBK，客户端(浏览器)发送的请求是UTF-8，直接new String(bytes)会乱码
+        // 考虑到字符集兼容性问题，将客户端(浏览器)请求、源代码文件、服务端响应的字符集统一成UTF-8
         requestBodyString = new String(bytes, Constants.Server.DEFAULT_CHARSET);
         return requestBodyString;
     }

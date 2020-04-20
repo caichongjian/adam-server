@@ -96,7 +96,7 @@ public class RestMethodInvoker {
         this.method = method;
         this.instance = instance;
 
-        // 方法的各个参数的名称、类型、是否请求体参数数据没必要每次请求过来时都通过反射获取，将它们缓存到arguments这一成员变量中,从而提高性能
+        // 方法的各个参数的名称、类型、是否请求体参数数据没必要每次请求过来时都通过反射获取，将它们缓存到argumentDefinitions这一成员变量中,从而提高性能
         final Parameter[] parameterDefinitions = method.getParameters();
         argumentDefinitions = new Argument[parameterDefinitions.length];
         for (int i = 0; i < parameterDefinitions.length; i++) {
@@ -143,7 +143,8 @@ public class RestMethodInvoker {
             } else {
                 String parameterString = request.getParameter(argumentDefinition.getName());
                 parameters[i] = Optional.ofNullable(parameterString)
-                        .map(str -> parseParameterFunction.apply(str, clazz)).orElse(null);
+                        .map(str -> parseParameterFunction.apply(str, clazz))
+                        .orElse(null);
             }
         }
         return method.invoke(instance, parameters);

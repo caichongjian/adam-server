@@ -36,6 +36,8 @@ import java.util.Enumeration;
  * @see javax.servlet.http.HttpServletRequest
  * @see javax.servlet.ServletRequest
  * @see https://github.com/oracle
+ * @see https://github.com/javaee/servlet-spec
+ * @see https://github.com/eclipse-ee4j/servlet-api
  */
 public interface MiniHttpServletRequest extends MiniServletRequest {
 
