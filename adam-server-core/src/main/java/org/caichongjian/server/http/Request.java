@@ -21,14 +21,13 @@ import java.util.stream.Collectors;
 public class Request implements MiniHttpServletRequest {
 
     private RequestStream requestStream;
-    private String content;
     private Map<String, String> headers = new LinkedHashMap<>();
     private ListMultimap<String, String> parameters = ArrayListMultimap.create();
     private String requestURI;
     private String method;
     private Cookie[] cookies;
     private String queryString;
-    private String requestBodyString;
+    private String requestBodyString; // 解析完请求体以后不会再使用它了。但还是先留着吧，万一以后出了什么bug也好调试
     private static final Logger LOGGER = LoggerFactory.getLogger(Request.class);
     private static final Splitter AMP_SPLITTER = Splitter.on("&").omitEmptyStrings();
 
@@ -39,20 +38,16 @@ public class Request implements MiniHttpServletRequest {
     /**
      * parse the request
      */
-    public void parse() throws IOException {
-        content = requestStream.readRequestLineAndHeaders();
-        parseHeaders();
-    }
+    public void parseRequestLineAndHeaders() throws IOException {
+        String requestLineAndHeadersString = requestStream.readRequestLineAndHeaders();
 
-    private void parseHeaders() {
-
-        if (StringUtils.isBlank(content)) {
+        if (StringUtils.isBlank(requestLineAndHeadersString)) {
             LOGGER.debug("empty request");
             return;
         }
 
         // 解析method、uri、version、queryString
-        String firstLine = content.lines().findFirst().orElseThrow();
+        String firstLine = requestLineAndHeadersString.lines().findFirst().orElseThrow();
         String[] firstLineProperties = firstLine.split(" ");
         method = firstLineProperties[0];
         requestURI = firstLineProperties[1];
@@ -63,7 +58,7 @@ public class Request implements MiniHttpServletRequest {
         }
 
         // 解析http请求的header
-        content.lines().skip(1)
+        requestLineAndHeadersString.lines().skip(1)
                 .takeWhile(StringUtils::isNotBlank)
                 .forEachOrdered(line -> {
                     int separationIndex = line.indexOf(": ");
@@ -97,6 +92,10 @@ public class Request implements MiniHttpServletRequest {
         return requestBodyString;
     }
 
+    /**
+     * 解析请求参数，输入参数字符串(样例id=1&name=ccj)，将参数解析出来以键值对形式存入parameters数据成员。
+     * @param parameterString 请求的参数，包括url参数和application/x-www-form-urlencoded请求体里的参数，格式样例为id=1&name=ccj
+     */
     public void parseParameter(String parameterString) {
 
         if (StringUtils.isBlank(parameterString)) {

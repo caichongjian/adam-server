@@ -64,7 +64,7 @@ public class RestMethodInvoker {
      * <p>param str String类型的http请求参数</p>
      * <p>param clazz 需要转换成的类型,如Integer.class, Long.class等等</p>
      */
-    private static final BiFunction<String, Class<?>, Object> parseParameterFunction = (str, clazz) -> {
+    private static final BiFunction<String, Class<?>, Object> castParameterTypeFunction = (str, clazz) -> {
         Object parameter = null;
         if (clazz == String.class) {
             parameter = str;
@@ -135,15 +135,15 @@ public class RestMethodInvoker {
                 parameters[i] = response;
             } else if (clazz.isArray()) {
                 String[] parameterStringArray = request.getParameterValues(argumentDefinition.getName());
-                parameters[i] = parseParameter(parameterStringArray, clazz);
-            } else if (contentTypeEquals(contentType, Constants.ContentType.APPLICATION_JSON) && argumentDefinition.isRequestBodyArgument()) {
+                parameters[i] = castParameterType(parameterStringArray, clazz);
+            } else if (contentTypeEquals(request.getContentType(), Constants.ContentType.APPLICATION_JSON) && argumentDefinition.isRequestBodyArgument()) {
                 parameters[i] = Optional.ofNullable(request.getRequestBodyString())
                         .map(s -> JSON.parseObject(s, clazz))
                         .orElse(null);
             } else {
                 String parameterString = request.getParameter(argumentDefinition.getName());
                 parameters[i] = Optional.ofNullable(parameterString)
-                        .map(str -> parseParameterFunction.apply(str, clazz))
+                        .map(str -> castParameterTypeFunction.apply(str, clazz))
                         .orElse(null);
             }
         }
@@ -159,7 +159,7 @@ public class RestMethodInvoker {
      * @param clazz            需要转换成的类型,如Integer[].class, Long[].class等等
      * @return 转换后的对象
      */
-    private Object parseParameter(String[] parameterStrings, Class<?> clazz) {
+    private Object castParameterType(String[] parameterStrings, Class<?> clazz) {
 
         return Optional.ofNullable(parameterStrings)
                 .map(strings -> {
@@ -167,7 +167,7 @@ public class RestMethodInvoker {
                     Object parameterArray = Array.newInstance(componentType, strings.length);
                     for (int i = 0; i < strings.length; i++) {
                         String parameterString = strings[i];
-                        Array.set(parameterArray, i, parseParameterFunction.apply(parameterString, componentType));
+                        Array.set(parameterArray, i, castParameterTypeFunction.apply(parameterString, componentType));
                     }
                     return parameterArray;
                 }).orElse(Array.newInstance(clazz.getComponentType(), 0));

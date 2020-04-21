@@ -46,7 +46,7 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
     + Apache Tomcat 源代码 https://github.com/apache/tomcat
     + Spring Framework 源代码 https://github.com/spring-projects/spring-framework
     + Spring Boot 源代码 https://github.com/spring-projects/spring-boot
-    + javax.servlet-api源码 
+    + javax.servlet-api 源代码
         + https://github.com/javaee/servlet-spec
         + https://github.com/eclipse-ee4j/servlet-api
 + 类库
@@ -61,6 +61,8 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
     + ch.qos.logback:logback-classic:1.2.3
     + ch.qos.logback:logback-access:1.2.3
 + 其他
+    + 《Java编程思想（第4版）》
+    + 书籍
     + 博客
     + 文章
     + 问答

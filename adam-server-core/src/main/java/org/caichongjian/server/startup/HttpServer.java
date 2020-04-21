@@ -65,7 +65,7 @@ public class HttpServer {
 
 //            s.setSoTimeout(10 * 1000);  // Ten seconds
                 Request request = new Request(requestStream);
-                request.parse();
+                request.parseRequestLineAndHeaders();
 
                 Response response = new Response(outputStream);
 
