@@ -62,6 +62,7 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
     + ch.qos.logback:logback-access:1.2.3
 + 其他
     + 《Java编程思想（第4版）》
+    + 《重构:改善既有代码的设计》
     + 书籍
     + 博客
     + 文章
