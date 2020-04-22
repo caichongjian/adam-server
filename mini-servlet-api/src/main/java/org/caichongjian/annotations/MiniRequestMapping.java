@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2018 the original author or authors.
+ * Copyright 2002-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ import java.lang.annotation.Target;
  * @author Arjen Poutsma
  * @author Sam Brannen
  *
- * @see Maven: org.springframework:spring-web:5.1.6.RELEASE  org.springframework.web.bind.annotation.RequestMapping
- * @see https://github.com/spring-projects
+ * @see Maven: org.springframework:spring-web:5.2.5.RELEASE  org.springframework.web.bind.annotation.RequestMapping
+ * @see https://github.com/spring-projects/spring-framework
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

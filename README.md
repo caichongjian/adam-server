@@ -1,5 +1,6 @@
 # adam-server: 从零开始学习HTTP服务器的开发(Java版)
-adam-server现在还很弱小，没法兼容现代浏览器的一些较新的特性，动不动就因兼容性问题报个错。
+adam-server现在还很弱小，没法兼容现代浏览器的一些较新的特性，动不动就因各种问题报个错。
+建议各位小伙伴仅用作学习材料，不要用在生产环境。
 
 ## 环境准备
 + JDK 11+
@@ -22,25 +23,29 @@ cd adam-server-example/target
 java -jar adam-server-example-0.1-SNAPSHOT.jar
 ```
 
-## 本人的开发环境(排序不分先后，提供出来防止各位小伙伴踩坑)
+## 本人的开发环境
+排序不分先后。因为adam-server经常报错，提供出来方便各位小伙伴排查错误。
 + 操作系统
     + Ubuntu 18.04.2 LTS
     + Windows 10
 + IDE
     + Intellij IDEA
     + Visual Studio Code
+    + Eclipse IDE
 + 客户端
     + Google Chrome 浏览器 76.0.3809.100 (请在浏览器设置里关闭预加载网页。**此版本的adam-server暂不支持预加载网页，不关闭会报错**)
     + Mozilla Firefox for Ubuntu 75.0
     + Microsoft Edge 浏览器
+    + Safari 浏览器
     + Apache JMeter (请在选项中取消勾选 Use KeepAlive. **此版本的adam-server暂不支持Use KeepAlive，勾选了会报错**)
     + curl
 + JDK
-    + openjdk 11.0.6
+    + OpenJDK 11.0.6
 + 构建工具
     + Apache Maven 3.6.0
 
 ## 鸣谢
+各位小伙伴是否可以帮原作者点★Star?
 + 源码
     + 《How Tomcat Works》源代码 https://brainysoftware.com/download
     + Apache Tomcat 源代码 https://github.com/apache/tomcat
@@ -50,7 +55,7 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
         + https://github.com/javaee/servlet-spec
         + https://github.com/eclipse-ee4j/servlet-api
 + 类库
-    + openjdk 11.0.6
+    + OpenJDK 11.0.6
     + javax.servlet:javax.servlet-api:4.0.1
     + org.apache.commons:commons-lang3:3.9
     + commons-collections:commons-collections:3.2.2
@@ -63,10 +68,17 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
 + 其他
     + 《Java编程思想（第4版）》
     + 《重构:改善既有代码的设计》
+    + IDE 插件
+    + Git 和 GitHub
+    + 翻译软件
+    + 搜索引擎
     + 书籍
     + 博客
     + 文章
     + 问答
-    + 搜索引擎
+    + 搜狗拼音输入法Ubuntu版
+    + 音乐
+    + 计算机网络
+    + 所有那些与adam-server直接相关和间接相关的、我想起来的和没想起来的、我用过和没用过的优秀软硬件与资源
     + 其他
 

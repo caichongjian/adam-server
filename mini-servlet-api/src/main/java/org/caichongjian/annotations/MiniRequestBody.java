@@ -34,8 +34,8 @@ import java.lang.annotation.Target;
  *
  * @author Arjen Poutsma
  *
- * @see Maven: org.springframework:spring-web:5.1.6.RELEASE  org.springframework.web.bind.annotation.RequestBody
- * @see https://github.com/spring-projects
+ * @see Maven: org.springframework:spring-web:5.2.5.RELEASE  org.springframework.web.bind.annotation.RequestBody
+ * @see https://github.com/spring-projects/spring-framework
  */
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

@@ -114,7 +114,7 @@ public class Request implements MiniHttpServletRequest {
      *
      * @param parameterString 请求的参数，包括url参数和application/x-www-form-urlencoded请求体里的参数，格式样例为id=1&name=ccj
      */
-    public void parseParameter(String parameterString) {
+    private void parseParameter(String parameterString) {
 
         if (StringUtils.isBlank(parameterString)) {
             return;

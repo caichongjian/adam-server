@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ import java.lang.annotation.Target;
  * @author Juergen Hoeller
  * @author Sam Brannen
  *
- * @see https://github.com/spring-projects
- * @see Maven: org.springframework:spring-context:5.1.6.RELEASE  org.springframework.context.annotation.ComponentScan
+ * @see https://github.com/spring-projects/spring-framework
+ * @see Maven: org.springframework:spring-context:5.2.5.RELEASE  org.springframework.context.annotation.ComponentScan
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

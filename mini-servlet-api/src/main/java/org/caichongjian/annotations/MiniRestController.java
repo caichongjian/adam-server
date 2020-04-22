@@ -35,8 +35,8 @@ import java.lang.annotation.Target;
  * @author Rossen Stoyanchev
  * @author Sam Brannen
  *
- * @see Maven: org.springframework:spring-web:5.1.6.RELEASE  org.springframework.web.bind.annotation.RestController
- * @see https://github.com/spring-projects
+ * @see Maven: org.springframework:spring-web:5.2.5.RELEASE  org.springframework.web.bind.annotation.RestController
+ * @see https://github.com/spring-projects/spring-framework
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

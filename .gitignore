@@ -4,5 +4,6 @@
 .settings/
 .project
 .classpath
-/logs/
+logs/
+*.log
 target/
