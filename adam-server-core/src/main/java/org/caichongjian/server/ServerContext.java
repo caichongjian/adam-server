@@ -3,17 +3,17 @@ package org.caichongjian.server;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ApplicationContext {
+public class ServerContext {
 
-    private static class ApplicationContextHolder {
-        private static final ApplicationContext INSTANCE = new ApplicationContext();
+    private static class ServerContextHolder {
+        private static final ServerContext INSTANCE = new ServerContext();
     }
 
-    private ApplicationContext() {
+    private ServerContext() {
     }
 
-    public static ApplicationContext getInstance() {
-        return ApplicationContextHolder.INSTANCE;
+    public static ServerContext getInstance() {
+        return ServerContextHolder.INSTANCE;
     }
 
     public byte[] getStaticResource(String uri) throws IOException {

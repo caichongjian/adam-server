@@ -5,10 +5,10 @@ import com.google.common.net.HttpHeaders;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.caichongjian.api.MiniHttpServletResponse;
-import org.caichongjian.server.ApplicationContext;
+import org.caichongjian.server.ServerContext;
 import org.caichongjian.server.Constants;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
@@ -67,7 +67,7 @@ public class Response implements MiniHttpServletResponse {
 
         uri = (StringUtils.isBlank(uri) || "/".equals(uri)) ? "index.html" : uri;
 
-        byte[] bytes = ApplicationContext.getInstance().getStaticResource(uri);
+        byte[] bytes = ServerContext.getInstance().getStaticResource(uri);
         if (ArrayUtils.isEmpty(bytes)) {
             bytes = stringToBytes(NOT_FOUND_TEMPLATE);
             responseLine = ResponseLine.NOT_FOUND;

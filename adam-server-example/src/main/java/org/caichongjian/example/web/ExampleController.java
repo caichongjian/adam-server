@@ -8,7 +8,7 @@ import org.caichongjian.api.MiniHttpServletRequest;
 import org.caichongjian.api.MiniHttpServletResponse;
 import org.caichongjian.example.pojo.User;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

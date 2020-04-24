@@ -14,7 +14,7 @@ import org.caichongjian.server.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;

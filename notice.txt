@@ -1,11 +1,125 @@
 adam-server 0.1-SNAPSHOT
-Copyright (c) 2020-2020 Cai Chongjian.
+Copyright (c) 2020-2020 蔡崇建.
 
-This product is licensed to you under the Apache License, Version 2.0
-(the "License"). You may not use this product except in compliance with
-the License.
+该产品分两部分：
+1. adam-server-core 和 adam-server-example 已根据MIT License授权给您。
+   协议详情请看https://github.com/caichongjian/anti-violence/blob/master/LICENSE
+2. mini-servlet-api 已根据Apache License, Version 2.0授权给您（“许可证”）。
+   除非遵守许可，否则不得使用该产品。您对这些子组件的源代码使用受该子组件许可证的条
+   款和条件的约束，如license.txt文件中所述。
 
-This product may include a number of subcomponents with separate
-copyright notices and license terms. Your use of the source code for
-these subcomponents is subject to the terms and conditions of the
-subcomponent's license, as noted in the license.txt file.
+因为我英语不好，所以可能对开源协议理解有偏差。如果原作者有任何意见，欢迎联系我的电子邮箱。
+
+
+====================================分割线====================================
+
+许可相关的内容已全部结束，下面是广告环节。如果您对广告不感兴趣，完全可以忽略下面的内容，
+不需要有任何心理压力。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+我试用了下最新版的 Apache Tomcat 和 Spring Boot，我认为很不错，适合用在生产环境。
+
+
+====================================分割线====================================
+
+广告相关的内容已全部结束，下面是我的私事。如果您不关心我的私事或者您不了解神经科学，完全
+可以忽略下面的内容，不需要有任何心理压力。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+以下内容请您不要在公共平台传播，谢谢。
+
+
+我从2019年3月到2019年7月这四个多月的时间里得了11种非传染病，其中几种症状一直处在发病、
+好转、复发、好转、复发的循环中。在这几种反复的症状中主要有失眠、咳嗽和流涕，其他的某些症
+状也有不同程度的复发。我如实填写健康状况后健康码平台一直给我黄码和红码，而我因陈年旧疾拿
+到的黄码吃过一次针对新冠肺炎密切接触者的胸透、抽血和居家隔离关怀套餐后不太愿意在没有治疗
+方向时出门。我现在无法从这反复的症状中挣脱出来。
+
+所以如果您了解神经科学相关知识的话，是否可以请您联系我的电子邮箱，并给我一些远程技术支持？
+
+

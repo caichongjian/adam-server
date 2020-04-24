@@ -17,7 +17,7 @@ public class AdamServerApplication {
 
     public static void run(Class<?> primarySource) {
 
-        LOGGER.info("starting the server....");
+        LOGGER.info("开始启动服务器....");
 
         LOGGER.info("开始扫描RestController注解....");
 

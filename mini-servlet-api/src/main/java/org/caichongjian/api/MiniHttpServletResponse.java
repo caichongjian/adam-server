@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 1997-2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997-2018 Oracle and/or its affiliates and others.
+ * All rights reserved.
  * Copyright 2004 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +18,7 @@
 
 package org.caichongjian.api;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 /**
  * javax.servlet-api的HttpServletResponse需要实现的方法太多了。
@@ -32,9 +33,10 @@ import javax.servlet.http.Cookie;
  *
  * @author	Various
  *
- * @see javax.servlet.http.HttpServletResponse
- * @see javax.servlet.ServletResponse
+ * @see jakarta.servlet.http.HttpServletResponse
+ * @see jakarta.servlet.ServletResponse
  * @see https://github.com/oracle
+ * @see https://github.com/eclipse-ee4j
  * @see https://github.com/javaee/servlet-spec
  * @see https://github.com/eclipse-ee4j/servlet-api
  */
