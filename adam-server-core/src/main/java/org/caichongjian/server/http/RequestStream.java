@@ -18,7 +18,7 @@ public class RequestStream implements Closeable {
 
     private InputStream socketInputStream;
 
-    public static final int BUFFER_SIZE = 128;
+    public static final int BUFFER_SIZE = 128; // 开发时方便测试，可根据实际需要调整
 
     /**
      * 读取请求行和请求头时，如果读取过量(将请求体的一小部分也从socketInputStream中读出来了)，将过量的部分缓存到这里
@@ -37,6 +37,8 @@ public class RequestStream implements Closeable {
      */
     public String readRequestLineAndHeaders() throws IOException {
 
+        // TODO 我测试的客户端(浏览器)都是以两个连续的CRLF(\r\n)来分隔请求头和请求体，也许我没考虑周全？
+        // 为了代码整洁美观，可以考虑将\r\n\r\n抽取为常量
         // 读取请求行和请求头,如果读到\r\n\r\n说明请求头读取完毕，否则一直读取直到读到\r\n\r\n为止
         StringBuilder sb = new StringBuilder(BUFFER_SIZE);
         byte[] lineAndHeadersBuffer = new byte[BUFFER_SIZE];
@@ -48,7 +50,7 @@ public class RequestStream implements Closeable {
             }
         } while (sb.indexOf("\r\n\r\n") == -1);
 
-        // 存在请求体时会有读取过量的情况，需要处理一下
+        // 存在请求体时会有读取过量的情况，需要处理一下。另外，如果需要性能的话，是可以少调用一次indexOf()方法的
         final int headersEndIndex = sb.indexOf("\r\n\r\n");
         final int bodyBytesStartIndex = ((headersEndIndex + 3) % BUFFER_SIZE) + 1;
         bodyBuffer = new byte[bytesRead - bodyBytesStartIndex]; // 即使没读取过量也生成一个空数组，防空指针并提高代码可读性

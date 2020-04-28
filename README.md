@@ -3,7 +3,7 @@ adam-server是面向初级程序员的功能简单的HTTP服务器。它现在�
 建议各位小伙伴仅用作学习材料，不要用在生产环境。
 
 ## 环境准备
-+ JDK 11+
++ Java 11+
 + Apache Maven (版本不明确)
 + 浏览器 (版本不明确)
 
@@ -33,12 +33,12 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
     + Visual Studio Code
     + Eclipse IDE
 + 客户端
-    + Google Chrome 浏览器 76.0.3809.100 (请在浏览器设置里关闭预加载网页。**此版本的adam-server暂不支持预加载网页，不关闭会报错**)
+    + Google Chrome 浏览器 79.0.3945.117 (adam-server可能与旧版本Chrome浏览器的预加载网页功能不兼容，建议升级浏览器至最新版)
     + Mozilla Firefox for Ubuntu 75.0
     + Microsoft Edge 浏览器
     + Safari 浏览器
     + Apache JMeter (请在选项中取消勾选 Use KeepAlive. **此版本的adam-server暂不支持Use KeepAlive，勾选了会报错**)
-    + curl
+    + curl (**此版本的adam-server对请求头的字符大小写和空格等格式要求十分苛刻**) 请求样例: `curl -X POST -H "Content-Type: application/json" --data '{"id": "232131", "name": "adam"}' http://localhost:8888/example/json`
 + JDK
     + OpenJDK 11.0.6
 + 构建工具
