@@ -5,6 +5,7 @@ import com.google.common.reflect.ClassPath;
 import org.caichongjian.annotations.MiniControllerScan;
 import org.caichongjian.annotations.MiniRestController;
 import org.caichongjian.server.RestProcessor;
+import org.caichongjian.server.ServerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,9 @@ public class AdamServerApplication {
             LOGGER.error("请在启动类加上@MiniControllerScan注解");
             System.exit(1);
         }
+
+        // 解决引入Jigsaw后在IDE中启动，主页404的问题。实现方式我不太满意，有机会再考虑优化
+        ServerContext.getInstance().setPrimarySource(primarySource);
 
         // 扫描RestController
         final String[] basePackages = annotation.basePackages();

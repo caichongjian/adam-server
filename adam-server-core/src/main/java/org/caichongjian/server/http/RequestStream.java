@@ -31,15 +31,15 @@ public class RequestStream implements Closeable {
 
     /**
      * 从socketInputStream中读取请求行和请求头，并将它们作为字符串返回
-     * 此方法必须调用且仅能调用一次
+     * 在一次请求中，此方法必须调用且仅能调用一次
+     * 内部方法，仅供adam-server-core内部调用
      *
      * @return 请求行和请求头
      */
     public String readRequestLineAndHeaders() throws IOException {
 
         // TODO 我测试的客户端(浏览器)都是以两个连续的CRLF(\r\n)来分隔请求头和请求体，也许我没考虑周全？
-        // 为了代码整洁美观，可以考虑将\r\n\r\n抽取为常量
-        // 读取请求行和请求头,如果读到\r\n\r\n说明请求头读取完毕，否则一直读取直到读到\r\n\r\n为止
+        // 读取请求行和请求头,如果读到\r\n\r\n说明请求头读取完毕，如果read()方法返回-1说明可能是读取完毕或者请求取消，否则一直读取直到读到\r\n\r\n为止
         StringBuilder sb = new StringBuilder(BUFFER_SIZE);
         byte[] lineAndHeadersBuffer = new byte[BUFFER_SIZE];
         int bytesRead;
@@ -48,11 +48,14 @@ public class RequestStream implements Closeable {
             for (int j = 0; j < bytesRead; j++) {
                 sb.append((char) lineAndHeadersBuffer[j]); // 应该不会有人在请求头里直接放汉字吧？？？
             }
-        } while (sb.indexOf("\r\n\r\n") == -1);
+        } while (bytesRead >= 0 && sb.indexOf("\r\n\r\n") == -1);  // 为了代码整洁美观，可以考虑将\r\n\r\n抽取为常量
 
         // 存在请求体时会有读取过量的情况，需要处理一下。另外，如果需要性能的话，是可以少调用一次indexOf()方法的
         final int headersEndIndex = sb.indexOf("\r\n\r\n");
         final int bodyBytesStartIndex = ((headersEndIndex + 3) % BUFFER_SIZE) + 1;
+        if (headersEndIndex == -1) {
+            return "";  // 因各种原因(单线程打断点在某些情况下能重现)导致请求头不完整时，返回空字符串
+        }
         bodyBuffer = new byte[bytesRead - bodyBytesStartIndex]; // 即使没读取过量也生成一个空数组，防空指针并提高代码可读性
         if (bodyBuffer.length > 0) {
             System.arraycopy(lineAndHeadersBuffer, bodyBytesStartIndex, bodyBuffer, 0, bodyBuffer.length);
@@ -62,7 +65,8 @@ public class RequestStream implements Closeable {
 
     /**
      * 从socketInputStream中读取请求体，并将其作为byte数组返回
-     * 此方法必须调用且仅能调用一次
+     * 在一次请求中，此方法仅能调用一次
+     * 内部方法，仅供adam-server-core内部调用
      *
      * @return 请求体内容
      */

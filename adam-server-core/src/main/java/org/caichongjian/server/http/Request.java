@@ -6,7 +6,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.net.HttpHeaders;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.caichongjian.api.MiniHttpServletRequest;
@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.Cookie;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -41,7 +42,8 @@ public class Request implements MiniHttpServletRequest {
     }
 
     /**
-     * parse the request
+     * 解析请求行和请求头
+     * 内部方法，在一次请求中只能调用一次，仅供adam-server-core内部调用
      */
     public void parseRequestLineAndHeaders() throws IOException {
         String requestLineAndHeadersString = requestStream.readRequestLineAndHeaders();
@@ -92,6 +94,12 @@ public class Request implements MiniHttpServletRequest {
                 .ifPresent(this::parseParameter);
     }
 
+    /**
+     * 解析请求体
+     * 内部方法，在一次请求中只能调用一次，仅供adam-server-core内部调用
+     *
+     * @throws IOException IOException
+     */
     public void parseRequestBody() throws IOException {
 
         int contentLength = getContentLength();

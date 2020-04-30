@@ -33,7 +33,7 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
     + Visual Studio Code
     + Eclipse IDE
 + 客户端
-    + Google Chrome 浏览器 79.0.3945.117 (adam-server可能与旧版本Chrome浏览器的预加载网页功能不兼容，建议升级浏览器至最新版)
+    + Google Chrome 浏览器 81.0.4044.129 (adam-server可能与旧版本Chrome浏览器的预加载网页功能不兼容，建议升级浏览器至最新版)
     + Mozilla Firefox for Ubuntu 75.0
     + Microsoft Edge 浏览器
     + Safari 浏览器
@@ -55,13 +55,13 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
         + https://github.com/javaee/servlet-spec
         + https://github.com/eclipse-ee4j/servlet-api
 + 类库
-    + OpenJDK 11.0.6
+    + OpenJDK 11.0.7
     + jakarta.servlet:javax.servlet-api:5.0.0-M1
-    + org.apache.commons:commons-lang3:3.9
-    + commons-collections:commons-collections:3.2.2
-    + com.google.guava:guava:28.2-jre
-    + com.alibaba:fastjson:1.2.66
-    + org.slf4j:slf4j-api:1.7.25
+    + org.apache.commons:commons-lang3:3.10
+    + org.apache.commons:commons-collections4:4.4
+    + com.google.guava:guava:29.0-jre
+    + com.alibaba:fastjson:1.2.68
+    + org.slf4j:slf4j-api:1.7.30
     + ch.qos.logback:logback-core:1.2.3
     + ch.qos.logback:logback-classic:1.2.3
     + ch.qos.logback:logback-access:1.2.3
@@ -69,6 +69,7 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
     + 《Java编程思想（第4版）》
     + 《重构:改善既有代码的设计》
     + IDE 插件
+    + Maven 插件
     + Git 和 GitHub
     + 翻译软件
     + 搜索引擎

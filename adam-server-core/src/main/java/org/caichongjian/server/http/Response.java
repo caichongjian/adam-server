@@ -65,7 +65,7 @@ public class Response implements MiniHttpServletResponse {
      */
     public void sendStaticResource(String uri) throws IOException {
 
-        uri = (StringUtils.isBlank(uri) || "/".equals(uri)) ? "index.html" : uri;
+        uri = (StringUtils.isBlank(uri) || "/".equals(uri)) ? "/index.html" : uri;
 
         byte[] bytes = ServerContext.getInstance().getStaticResource(uri);
         if (ArrayUtils.isEmpty(bytes)) {

@@ -1,0 +1,18 @@
+/**
+ * adam-server-core中存在很多只能调用一次的、public修饰的方法。
+ * 为了防止小伙伴们误操作了这些方法从而导致应用程序不可用，使用了Java 9+的新特性Jigsaw
+ *
+ * 当前版本配置了module-info.java后使用IDE启动遇到一点点小问题，先重命名文件并提交代码，过几天再来解决这个问题
+ */
+module org.caichongjian.adam.server.example {
+    requires org.slf4j;
+    requires org.apache.commons.collections4;
+    requires org.apache.commons.lang3;
+    requires com.google.common;
+    requires fastjson;
+    requires java.servlet;
+    requires org.caichongjian.mini.servlet.api;
+    requires org.caichongjian.adam.server.core;
+
+    exports org.caichongjian.example.web;
+}

@@ -1,5 +1,6 @@
 package org.caichongjian.server.startup;
 
+import org.apache.commons.lang3.StringUtils;
 import org.caichongjian.server.Constants;
 import org.caichongjian.server.RestProcessor;
 import org.caichongjian.server.StaticResourceProcessor;
@@ -27,7 +28,7 @@ public class HttpServer {
 
     private static ExecutorService executorService;
 
-    public static void start() {
+    static void start() {
 
         socketBlockingQueue = new ArrayBlockingQueue<>(Constants.Server.THREAD_POOL_SIZE * 2);
         executorService = Executors.newFixedThreadPool(Constants.Server.THREAD_POOL_SIZE);
@@ -72,6 +73,8 @@ public class HttpServer {
                 if (RestProcessor.containsUriMapping(request.getRequestURI())) {
                     RestProcessor processor = new RestProcessor();
                     processor.process(request, response);
+                } else if (StringUtils.isBlank(request.getMethod())) {
+                    // TODO 此种情况下说明请求头因各种原因没发送完整，处理逻辑还没想好
                 } else {
                     StaticResourceProcessor processor = new StaticResourceProcessor();
                     processor.process(request, response);

@@ -14,12 +14,14 @@
         <module>adam-server-example</module>
     </modules>
     <properties>
-        <slf4j.version>1.7.25</slf4j.version>
+        <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <commons-lang3.version>3.9</commons-lang3.version>
-        <guava.version>28.2-jre</guava.version>
-        <fastjson.version>1.2.66</fastjson.version>
-        <commons-collections.version>3.2.2</commons-collections.version>
+        <commons-lang3.version>3.10</commons-lang3.version>
+        <guava.version>29.0-jre</guava.version>
+        <fastjson.version>1.2.68</fastjson.version>
+        <commons-collections.version>4.4</commons-collections.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
     </properties>
 
     <dependencies>
@@ -37,8 +39,8 @@
             <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
             <version>${commons-collections.version}</version>
         </dependency>
         <dependency>
@@ -102,9 +104,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
