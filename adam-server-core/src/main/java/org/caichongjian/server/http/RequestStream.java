@@ -16,7 +16,7 @@ import java.io.InputStream;
  */
 public class RequestStream implements Closeable {
 
-    private InputStream socketInputStream;
+    private final InputStream socketInputStream;
 
     public static final int BUFFER_SIZE = 128; // 开发时方便测试，可根据实际需要调整
 

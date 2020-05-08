@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 
 public class Request implements MiniHttpServletRequest {
 
-    private RequestStream requestStream;
-    private Map<String, String> headers = new LinkedHashMap<>();
-    private ListMultimap<String, String> parameters = ArrayListMultimap.create();
+    private final RequestStream requestStream;
+    private final Map<String, String> headers = new LinkedHashMap<>();
+    private final ListMultimap<String, String> parameters = ArrayListMultimap.create();
     private String requestURI;
     private String method;
     private Cookie[] cookies;

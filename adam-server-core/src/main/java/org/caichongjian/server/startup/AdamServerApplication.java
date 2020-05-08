@@ -14,7 +14,10 @@ import org.slf4j.LoggerFactory;
  */
 public class AdamServerApplication {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(AdamServerApplication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdamServerApplication.class);
+
+    private AdamServerApplication() {
+    }
 
     public static void run(Class<?> primarySource) {
 
@@ -37,6 +40,7 @@ public class AdamServerApplication {
         final String[] basePackages = annotation.basePackages();
         for (String basePackage : basePackages) {
             try {
+                // TODO ClassPath类上有@Beta注解，它标识此API是not "API-frozen"的，即未来版本中它可能修改或删除。也就是提醒使用者使用它要慎重。这个需要慎重使用的类目前貌似暂时和Jigsaw不太兼容
                 final ImmutableSet<ClassPath.ClassInfo> classInfos = ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClassesRecursive(basePackage);
                 for (ClassPath.ClassInfo classInfo : classInfos) {
                     final Class<?> clazz = classInfo.load();

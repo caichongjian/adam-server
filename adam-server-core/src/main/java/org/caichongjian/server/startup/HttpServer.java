@@ -16,17 +16,22 @@ import java.net.Socket;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class HttpServer {
+class HttpServer {
 
     public static final String EXIT_URI = "/EXIT";
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(HttpServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpServer.class);
 
+    // TODO 关闭服务器的方式需要重新设计
     private static AtomicBoolean runningFlag = new AtomicBoolean(true);
 
     private static BlockingQueue<Socket> socketBlockingQueue;
 
+    // TODO 关闭服务器的方式需要重新设计
     private static ExecutorService executorService;
+
+    private HttpServer() {
+    }
 
     static void start() {
 
@@ -80,10 +85,10 @@ public class HttpServer {
                     processor.process(request, response);
                 }
 
-                // TODO 关闭服务器方式需要重写
+                // TODO 关闭服务器的方式需要重新设计
                 runningFlag.compareAndSet(true, !EXIT_URI.equals(request.getRequestURI()));
 
-            } catch (InterruptedException e) {
+            } catch (InterruptedException e) { // TODO 关闭服务器的方式需要重新设计
                 LOGGER.info("线程{}因中断而停止", Thread.currentThread().getName());
             } catch (Exception e) {
                 LOGGER.error("an error occurs: ", e);

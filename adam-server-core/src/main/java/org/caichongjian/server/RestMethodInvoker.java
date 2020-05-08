@@ -19,14 +19,14 @@ import java.lang.reflect.Parameter;
  */
 public class RestMethodInvoker {
 
-    private Method method;
-    private Object instance;
-    private Argument[] argumentDefinitions;
+    private final Method method;
+    private final Object instance;
+    private final Argument[] argumentDefinitions;
 
     private static final class Argument {
-        private String name;
-        private Class<?> type;
-        private boolean isRequestBodyArgument;
+        private final String name;
+        private final Class<?> type;
+        private final boolean isRequestBodyArgument;
 
         public Argument(String name, Class<?> type, boolean isRequestBodyArgument) {
             this.name = name;

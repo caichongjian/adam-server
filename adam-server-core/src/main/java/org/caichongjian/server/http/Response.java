@@ -15,15 +15,15 @@ import java.util.*;
 
 public class Response implements MiniHttpServletResponse {
 
-    private OutputStream outputStream;
-    private Map<String, String> headers = new LinkedHashMap<>();
-    private List<Cookie> cookies = new LinkedList<>();
+    private final OutputStream outputStream;
+    private final Map<String, String> headers = new LinkedHashMap<>();
+    private final List<Cookie> cookies = new LinkedList<>();
     private ResponseLine responseLine = ResponseLine.OK;
 
     private enum ResponseLine {
         OK("HTTP/1.1 200 OK"),
         NOT_FOUND("HTTP/1.1 404 File Not Found");
-        private String text;
+        private final String text;
 
         ResponseLine(String text) {
             this.text = text;
