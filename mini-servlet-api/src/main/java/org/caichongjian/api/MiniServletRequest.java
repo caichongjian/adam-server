@@ -22,14 +22,14 @@ import java.util.Enumeration;
 import java.util.Map;
 
 /**
- * javax.servlet-api的ServletRequest需要实现的方法太多了。
+ * jakarta.servlet-api的ServletRequest需要实现的方法太多了。
  * 简易服务器不会有真实用户，没必要实现那么多方法，所以自定义了简易版的接口。
- * 接口方法的数量比起javax.servlet-api来少了很多。
+ * 接口方法的数量比起jakarta.servlet-api来少了很多。
  * 如果你觉得adam-server对你有帮助，请去下面的链接点★Star
  * <p>
- * There are too many methods that javax.servlet-api's ServletRequest needs to implement.
+ * There are too many methods that jakarta.servlet-api's ServletRequest needs to implement.
  * Simple server will not have real users, there is no need to implement so many methods, so the interface of the simple version is customized.
- * The number of interface methods is much less than javax.servlet-api.
+ * The number of interface methods is much less than jakarta.servlet-api.
  * If you think adam-server is helpful to you, please go to the link below and click ★Star
  *
  * @author Various

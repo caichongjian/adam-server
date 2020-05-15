@@ -58,6 +58,7 @@ public class Request implements MiniHttpServletRequest {
         String[] firstLineProperties = firstLine.split(" ");
         method = firstLineProperties[0];
         requestURI = firstLineProperties[1];
+        // TODO 在 adam-server 中出现了很多类似的用于轻量级拆分字符串的代码，可以将这些代码抽取出来。但在HTTP服务器代码中加个字符串工具类我又感觉有点奇怪，先做个标记吧。
         int uriSplitIndex = requestURI.indexOf('?');
         if (uriSplitIndex != -1) {
             queryString = requestURI.substring(uriSplitIndex + 1);

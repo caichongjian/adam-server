@@ -63,7 +63,7 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
     - https://github.com/eclipse-ee4j/servlet-api
 - 类库
   - OpenJDK 11.0.7
-  - jakarta.servlet:javax.servlet-api:5.0.0-M1
+  - jakarta.servlet:jakarta.servlet-api:5.0.0-M1
   - org.apache.commons:commons-lang3:3.10
   - org.apache.commons:commons-collections4:4.4
   - com.google.guava:guava:29.0-jre
