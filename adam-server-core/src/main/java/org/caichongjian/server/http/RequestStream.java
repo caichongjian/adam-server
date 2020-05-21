@@ -10,7 +10,7 @@ import java.io.InputStream;
  * <p>封装http请求的输入流</p>
  * <p/>
  * <p>SocketInputStream调用readAllBytes()时会一直阻塞，从而导致服务器无法正常运行。</p>
- * <p>而调用readNBytes()需要知道整个请求报文的长度，socketInputStream.available()获得的不一定是http请求的全部长度,
+ * <p>而调用readNBytes()需要知道整个请求报文的长度，socketInputStream.available()获得的不一定是http请求报文的全部长度,
  * 因此socketInputStream.readNBytes(socketInputStream.available())也是不可行的。</p>
  * <p>为了解决读取输入流出现的各种问题，引入RequestStream来按HTTP协议约定的格式读取输入流。</p>
  */

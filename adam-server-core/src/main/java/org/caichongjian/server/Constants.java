@@ -18,6 +18,10 @@ public final class Constants {
         public static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
         public static final String APPLICATION_JSON = "application/json";
         public static final String TEXT_HTML = "text/html";
+        /**
+         * <p>adam-server的定位是学习材料，学习材料本身没必要实现这么多特性。</p>
+         * <p>小伙伴们如果感兴趣的话，可以将它作为一道练习题，自己尝试着实现文件的上传下载特性。</p>
+         */
         public static final String MULTIPART_FORM_DATA = "multipart/form-data";
 
     }

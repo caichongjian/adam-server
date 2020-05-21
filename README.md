@@ -1,6 +1,6 @@
 # adam-server: 从零开始学习 HTTP 服务器的开发(Java 版)
 
-adam-server 是面向初级程序员的功能简单的 HTTP 服务器。它现在还很弱小，没法兼容现代浏览器的一些较新的特性，动不动就因各种问题报个错。
+adam-server 是面向初级程序员的功能简单的 HTTP 服务器。它很弱小，只实现了部分的HTTP/1.0，没法兼容现代浏览器的一些较新的功能，经常因各种问题报错。
 建议各位小伙伴仅用作学习材料，不要用在生产环境。
 
 ## 环境准备
@@ -38,8 +38,8 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
   - Visual Studio Code
   - Eclipse IDE
 - 客户端
-  - Google Chrome 浏览器 81.0.4044.129 (adam-server 可能与旧版本 Chrome 浏览器的预加载网页功能不兼容，建议升级浏览器至最新版)
-  - Mozilla Firefox for Ubuntu 75.0
+  - Google Chrome 浏览器 83.0.4103.61 (adam-server 可能与旧版本 Chrome 浏览器的预加载网页功能不兼容，我认为 Chrome 浏览器的最新版本不错，建议升级浏览器至最新版)
+  - Mozilla Firefox for Ubuntu 76.0.1
   - Microsoft Edge 浏览器
   - Safari 浏览器
   - Apache JMeter (请在选项中取消勾选 Use KeepAlive. **此版本的 adam-server 暂不支持 Use KeepAlive，勾选了会报错**)
@@ -58,6 +58,7 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
   - Apache Tomcat 源代码 https://github.com/apache/tomcat
   - Spring Framework 源代码 https://github.com/spring-projects/spring-framework
   - Spring Boot 源代码 https://github.com/spring-projects/spring-boot
+  - Rust 编程语言官网上提供的文档 https://doc.rust-lang.org/book/ch20-03-graceful-shutdown-and-cleanup.html
   - jakarta.servlet-api 源代码
     - https://github.com/javaee/servlet-spec
     - https://github.com/eclipse-ee4j/servlet-api
