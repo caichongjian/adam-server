@@ -11,6 +11,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 负责校验配置，并扫描Controller
+ * <p/>
+ * <p>截止到2020年下午2点28分为止，本Git仓库 0 fork， 0 Star；</p>
+ * <p>GitHub 的 Insights 显示 3 Clones，3 Unique cloners，约等于我自己 Clone 的次数；</p>
+ * <p>GitHub 的 Insights 显示 73 Views，6 Unique visitors，约等于我自己查看的次数</p>
  */
 public class AdamServerApplication {
 

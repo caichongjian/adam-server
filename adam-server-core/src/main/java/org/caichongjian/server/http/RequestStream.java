@@ -18,7 +18,7 @@ public class RequestStream implements Closeable {
 
     private final InputStream socketInputStream;
 
-    public static final int BUFFER_SIZE = 128; // 开发时方便测试，可根据实际需要调整
+    public static final int BUFFER_SIZE = 128; // 开发时方便调试，可根据实际需要调整
 
     /**
      * 读取请求行和请求头时，如果读取过量(将请求体的一小部分也从socketInputStream中读出来了)，将过量的部分缓存到这里

@@ -13,15 +13,15 @@ import java.util.concurrent.*;
  *
  * @see https://doc.rust-lang.org/book/ch20-03-graceful-shutdown-and-cleanup.html
  */
-class ThreadPool {
+public class ThreadPool {
 
     private final ExecutorService executorService;
     private final BlockingQueue<Message> messageBlockingQueue;
-    private final List<Worker> workers;
+    private final List<Worker> workers; // 也可以直接存储一个数字
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadPool.class);
 
     public ThreadPool(int size) {
-        messageBlockingQueue = new ArrayBlockingQueue<>(size);
+        messageBlockingQueue = new ArrayBlockingQueue<>(size * 2); // 开发时方便调试，可根据实际需要调整
         executorService = Executors.newFixedThreadPool(size);
         workers = new ArrayList<>(size);
 
@@ -99,7 +99,7 @@ class ThreadPool {
                     jobMessage.getJob().run();
 
                 } catch (InterruptedException e) {
-                    LOGGER.error("InterruptedException", e);
+                    LOGGER.error("InterruptedException: ", e);
                     Thread.currentThread().interrupt();
                 }
             }

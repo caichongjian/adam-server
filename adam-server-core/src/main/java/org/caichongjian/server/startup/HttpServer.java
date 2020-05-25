@@ -32,7 +32,7 @@ class HttpServer {
             try {
                 threadPool.drop();
             } catch (InterruptedException e) {
-                LOGGER.error("InterruptedException", e);
+                LOGGER.error("InterruptedException: ", e);
                 Thread.currentThread().interrupt();
             }
         }));
@@ -45,6 +45,9 @@ class HttpServer {
                 final Socket socket = ss.accept();
                 threadPool.execute(() -> handleConnection(socket));
             }
+        } catch (InterruptedException e) {
+            LOGGER.error("InterruptedException: ", e);
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             LOGGER.error("an error occurs: ", e);
         }
