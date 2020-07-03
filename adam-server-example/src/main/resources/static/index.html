@@ -1,80 +1,111 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>index html</title>
-    <script>
-        // 我前端很菜的，绞尽脑汁憋出来的前端代码十分辣眼睛，大家不要学我。
-        // TODO 以下有大量重复的代码，感兴趣的朋友可以重构一下。我是不打算改了。
-        function postJson(url, params) {
-          var xhr = new XMLHttpRequest();
-          xhr.open("POST", url, true);
-          xhr.setRequestHeader("Content-Type", "application/json");
-          xhr.onload = function (e) {
-            if (xhr.readyState === 4) {
-              if (xhr.status === 200) {
-                console.log(xhr.responseText);
-                document.getElementById("responseText").innerHTML=xhr.responseText;
-              } else {
-                console.error(xhr.statusText);
-              }
-            }
-          };
-          xhr.onerror = function (e) {
+  <meta charset="UTF-8">
+  <title>index html</title>
+  <script>
+    // 我的前端水平很菜的，绞尽脑汁憋出来的前端代码十分辣眼睛，大家不要学我的前端代码(我没正经学过前端，不了解ECMAScript 2015 Language Specification，仅了解CSS的一点皮毛，没学过TypeScript等編程语言)。
+    // 我不了解前端，给不了前端初学者建议。如果想在adam-server中增加对js、css和图片等静态资源的支持的话，可以自行修改Response.java中的sendStaticResource方法。
+    // 如果是后端开发者，可以考虑用这个页面来调试简单的接口。
+    // TODO 以下有大量重复的代码，感兴趣的朋友可以重构一下。我身为一个后端程序员是不打算改了。
+    function postJson(url, params) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", url, false); // 出于自动功能测试需要，选择发送同步请求
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onload = function (e) {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            console.log(xhr.responseText);
+            document.getElementById("responseText").innerHTML = xhr.responseText;
+          } else {
             console.error(xhr.statusText);
-          };
-          xhr.send(JSON.stringify(params));
+          }
         }
+      };
+      xhr.onerror = function (e) {
+        console.error(xhr.statusText);
+      };
+      xhr.send(JSON.stringify(params));
+    }
 
-        function postForm(url, params) {
-          var xhr = new XMLHttpRequest();
-          xhr.open("POST", url, true);
-          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-          xhr.onload = function (e) {
-            if (xhr.readyState === 4) {
-              if (xhr.status === 200) {
-                console.log(xhr.responseText);
-                document.getElementById("responseText").innerHTML=xhr.responseText;
-              } else {
-                console.error(xhr.statusText);
-              }
-            }
-          };
-          xhr.onerror = function (e) {
+    function postForm(url, params) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", url, false);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.onload = function (e) {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            console.log(xhr.responseText);
+            document.getElementById("responseText").innerHTML = xhr.responseText;
+          } else {
             console.error(xhr.statusText);
-          };
-          xhr.send(params);
+          }
         }
+      };
+      xhr.onerror = function (e) {
+        console.error(xhr.statusText);
+      };
+      xhr.send(params);
+    }
 
-        function getData(url) {
-          var xhr = new XMLHttpRequest();
-          xhr.open("GET", url, true);
-          xhr.onload = function (e) {
-            if (xhr.readyState === 4) {
-              if (xhr.status === 200) {
-                console.log(xhr.responseText);
-                document.getElementById("responseText").innerHTML=xhr.responseText;
-              } else {
-                console.error(xhr.statusText);
-              }
-            }
-          };
-          xhr.onerror = function (e) {
+    function getData(url) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", url, false);
+      xhr.onload = function (e) {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            console.log(xhr.responseText);
+            document.getElementById("responseText").innerHTML = xhr.responseText;
+          } else {
             console.error(xhr.statusText);
-          };
-          xhr.send(null);
+          }
         }
-    </script>
+      };
+      xhr.onerror = function (e) {
+        console.error(xhr.statusText);
+      };
+      xhr.send(null);
+    }
+
+    // 自动进行解析请求头和解析请求体的简单的功能测试。也可以判断一下服务端返回的数据是否符合预期。
+    function autoTest() {
+      var buttons = document.getElementById("testButtonGroup").getElementsByTagName("button");
+      for (var h = 0; h < 50; h++) {
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].onclick();
+        }
+      }
+    }
+
+  </script>
+
+  <style>
+    #testButtonGroup button {
+      background-color: red;
+    }
+  </style>
 </head>
+
 <body>
-    <div><h1>This is a page for testing adam-server</h1></div>
-    <div>
-        <button type="button" onclick="getData('/example/hello?id=1&name=蔡崇建')">hello</button>
-        <button type="button" onclick="postForm('/example/hi?name=Adam&message=hi', 'ids=1&ids=2&ids=3&ids=4&operation=insert')">hi</button>
-        <button type="button" onclick="postForm('/example/parameter/array', 'ids=1&ids=2&ids=3&ids=4')">parameter/array</button>
-        <button type="button" onclick="postJson('/example/json', {id: 1232131, name: '蔡崇建'})">json</button>
-        <button type="button" onclick="getData('/example/cookie')">cookie</button>
-    </div>
-    <div id="responseText" style="padding-top: 15px"><h2>View response text</h2></div>
+  <div>
+    <h1>This is a page for testing adam-server</h1>
+  </div>
+  <div>
+    <button type="button" id="autoTest" onclick="autoTest()" style="background-color:orange;">Auto Test</button>
+    <span style="background-color:orange;">Please check the browser console</span>
+  </div>
+  <div id="testButtonGroup" style="padding-top: 15px">
+    <!-- 如果感兴趣的话，可以将传的参数改成随机数和随机字符串 -->
+    <button type="button" onclick="getData('/example/hello?id=1&name=蔡崇建')">hello</button>
+    <button type="button" onclick="postForm('/example/hi?name=Adam&message=hi', 'ids=1&ids=2&ids=3&ids=4&operation=insert')">hi</button>
+    <button type="button" onclick="postForm('/example/parameter/array', 'ids=1&ids=2&ids=3&ids=4')">parameter/array</button>
+    <button type="button" onclick="postJson('/example/json', {id: 1232131, name: '蔡崇建'})">json</button>
+    <button type="button" onclick="getData('/example/cookie')">cookie</button>
+  </div>
+  <div id="responseText" style="padding-top: 15px">
+    <h2>View response text</h2>
+  </div>
 </body>
+
 </html>

@@ -1,0 +1,216 @@
+package org.caichongjian.server.startup;
+
+import com.google.common.annotations.Beta;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * 阅读Rust编程语言官网上提供的文档时，看到上面有一段代码线程池用得很不错。
+ * 刚好adam-server中有一段代码线程池用得十分辣眼睛，就学习参考了以下链接中的代码。
+ *
+ * <p>前些天心血来潮，想给adam-server加个请求超时功能。
+ * 花了好多好多天做出来，实测效果不好，但丢弃掉这些更改又感觉可惜。
+ * 请求超时时间用socket.setSoTimeout(connectionTimeoutMillis)就可以了，
+ * 如果需要打断代码中的Thread.sleep()操作的话且能忍受bug的话，可以考虑使用这个@Beta版本的线程池。</p>
+ *
+ * <p>代码写得很辣眼睛，很多地方还有优化的空间，还有很多bug没测出来。
+ * 如果感兴趣的话可以试着将ThreadPool替换成这些内容玩一下。</p>
+ *
+ * @see https://doc.rust-lang.org/book/ch20-03-graceful-shutdown-and-cleanup.html
+ */
+@Beta
+public class ThreadPool {
+
+    private final ExecutorService executorService;
+    private final BlockingQueue<Message> messageBlockingQueue;
+    private final List<Worker> workers;
+    private Monitor monitor;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadPool.class);
+
+    public ThreadPool(int size) {
+        this(size, null);
+    }
+
+    /**
+     * 创建线程池
+     *
+     * @param size             线程池大小
+     * @param maxExecutionTime 工作最长执行时间，单位为秒。工作执行时间超过这个值之后将打断这个工作。如果设置为null，线程池将不会打断工作。
+     */
+    public ThreadPool(int size, Integer maxExecutionTime) {
+        messageBlockingQueue = new ArrayBlockingQueue<>(size * 2); // 开发时方便调试，可根据实际需要调整
+        executorService = Executors.newFixedThreadPool(size);
+        workers = new ArrayList<>(size);
+
+        for (int i = 1; i <= size; i++) {
+            Worker worker = new Worker(i, messageBlockingQueue);
+            workers.add(worker);
+            executorService.execute(worker);
+        }
+        if (maxExecutionTime != null) {
+            monitor = new Monitor(workers, maxExecutionTime * 1000L);  // 单位从秒转为毫秒，方便进行计算
+        }
+    }
+
+    public void execute(Runnable job) throws InterruptedException {
+        messageBlockingQueue.put(new JobMessage(job));
+    }
+
+    public void drop() throws InterruptedException {
+        LOGGER.info("Sending terminate message to all workers.");
+        for (int i = 0; i < workers.size(); i++) {
+            messageBlockingQueue.put(new TerminateMessage());
+        }
+        executorService.shutdown();
+        executorService.awaitTermination(1, TimeUnit.HOURS);
+        if (monitor != null) {
+            monitor.terminate();
+        }
+    }
+
+    /**
+     * <p>ThreadPool 向 Worker 发送的消息。</p>
+     * <p>消息分两种类型：执行处理请求工作的消息和终止Worker的消息。</p>
+     * <p/>
+     * <p>实现同样的功能有两种办法：通过类名区分的方式和使用成员变量区分的方式。</p>
+     * <p>目前在 adam-server 中选择了第一种办法。</p>
+     */
+    private interface Message {
+
+    }
+
+    private static final class TerminateMessage implements Message {
+
+    }
+
+
+    private static class JobMessage implements Message {
+
+        private final Runnable job;
+
+        JobMessage(Runnable job) {
+            this.job = job;
+        }
+
+        public Runnable getJob() {
+            return job;
+        }
+    }
+
+    private static final class Worker implements Runnable {
+
+        private final int id;
+        private final BlockingQueue<Message> messageBlockingQueue;
+        // 当前线程的引用，有了它才能打断那些执行时间过长的工作
+        private Thread currentThread;
+        // 工作开始时间，Monitor线程会通过系统当前时间和工作开始时间的时间差判断是否要打断当前工作。不知道工作开始时间是否需要精确到纳秒。
+        private final AtomicLong jobStartTimeMillis = new AtomicLong(0);
+
+        public Worker(int id, BlockingQueue<Message> messageBlockingQueue) {
+            this.id = id;
+            this.messageBlockingQueue = messageBlockingQueue;
+        }
+
+        @Override
+        public void run() {
+            currentThread = Thread.currentThread(); // 不知道是否有更好的办法，下面那个interruptOvertimeJob()方法是由Monitor线程调用的，在那边使用Thread.currentThread()似乎不妥
+            while (true) {
+                try {
+                    final Message message = messageBlockingQueue.take();
+                    if (message instanceof TerminateMessage) {
+                        LOGGER.debug("Worker {} was told to terminate.", id);
+                        break;
+                    }
+
+                    LOGGER.debug("Worker {} got a job; executing.", id);
+                    jobStartTimeMillis.set(System.currentTimeMillis());
+                    JobMessage jobMessage = (JobMessage) message;
+                    jobMessage.getJob().run();
+                    LOGGER.debug("Worker {} finished the job.", id);
+
+                } catch (InterruptedException e) {
+                    LOGGER.error("InterruptedException: ", e);
+                } finally {
+                    // 如果担心synchronized影响程序性能，可以将synchronized换成其他锁，也可以将加锁相关的代码抽出来放到一个新的类中
+                    synchronized (this) {
+                        LOGGER.debug("Worker {} ended the job.", id);
+                        jobStartTimeMillis.set(0); // 工作执行完成后将工作开始时间置0，表示当前没有在执行工作
+                        Thread.interrupted(); // 用于清除中断状态，防止影响到下一次工作
+                    }
+                }
+            }
+        }
+
+        /**
+         * 打断超时的工作。由Monitor线程调用，用于打断那些执行时间过长的工作。
+         * 设计灵感来自于一条新闻。
+         *
+         * @param maxExecutionTimeMillis 工作最长执行时间，单位为毫秒。工作执行时间超过这个值之后将打断这个工作。
+         */
+        public void interruptOvertimeJob(long maxExecutionTimeMillis) {
+
+            final long jobStartTimeMillisRaw = jobStartTimeMillis.get();
+            // 工作开始时间为0则说明当前没有在执行工作。
+            if (jobStartTimeMillisRaw > 0 && System.currentTimeMillis() - jobStartTimeMillisRaw > maxExecutionTimeMillis) {
+                // 再校验一次，防止已判定为超时的工作在判断完后恰好结束了，导致程序错误地打断了下一次正常的工作
+                // TODO 没测过，没法保证不会出现线程安全问题
+                // 加锁防止已判定为超时的工作在第二次判断完后恰好结束了；也可以换成其他锁
+                synchronized (this) {
+                    if (jobStartTimeMillis.get() == jobStartTimeMillisRaw && !currentThread.isInterrupted()) {
+                        LOGGER.debug("Interrupt worker {}", id);
+                        currentThread.interrupt();
+                    }
+                }
+            }
+        }
+    }
+
+    // TODO 可能会重构
+    private static final class Monitor implements Runnable {
+
+        private final List<Worker> workers;
+        private final long maxExecutionTimeMillis;
+        private final CountDownLatch countDownLatch;
+        // TODO 也许把它放线程池里或者使用其他API更好？
+        private final Thread monitorThread;
+
+        public Monitor(List<Worker> workers, long maxExecutionTimeMillis) {
+            this.workers = workers;
+            this.maxExecutionTimeMillis = maxExecutionTimeMillis;
+            countDownLatch = new CountDownLatch(1);
+
+            // 启动Monitor线程
+            monitorThread = new Thread(this);
+            monitorThread.setName("MonitorThread-" + monitorThread.getName());
+            monitorThread.start();
+        }
+
+        @Override
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    // 每隔一秒钟检查一次是否有超时的工作，如果有则打断它们
+                    Thread.sleep(1000);
+                    for (Worker worker : workers) {
+                        worker.interruptOvertimeJob(maxExecutionTimeMillis);
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            LOGGER.info("Monitor was told to terminate.");
+            countDownLatch.countDown();
+        }
+
+        public void terminate() throws InterruptedException {
+            // TODO 有没有更好的实现方式
+            monitorThread.interrupt();
+            countDownLatch.await(1, TimeUnit.HOURS);
+        }
+    }
+}

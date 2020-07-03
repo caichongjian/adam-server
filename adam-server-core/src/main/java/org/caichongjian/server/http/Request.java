@@ -53,8 +53,8 @@ public class Request implements MiniHttpServletRequest {
             return;
         }
 
-        // 解析method、uri、version、queryString
-        String firstLine = requestLineAndHeadersString.lines().findFirst().orElseThrow();
+        // 解析method、requestURI、queryString，暂时不支持解析请求行的protocol
+        String firstLine = requestLineAndHeadersString.lines().findFirst().orElseThrow(); // 可以换成其他方式
         String[] firstLineProperties = firstLine.split(" ");
         method = firstLineProperties[0];
         requestURI = firstLineProperties[1];
@@ -197,6 +197,7 @@ public class Request implements MiniHttpServletRequest {
 
     @Override
     public String getHeader(String name) {
+        // TODO 处理逻辑与另外两个地方不太一致。。。
         return ObjectUtils.defaultIfNull(headers.get(name), headers.get(name.toLowerCase()));
     }
 
@@ -298,18 +299,18 @@ public class Request implements MiniHttpServletRequest {
     }
 
     /**
-     * 获取请求体里的json格式传递的对象
+     * 获取请求体里的json格式(或者其他任意你喜欢的数据传输格式)传递的对象
      *
      * @param type 类对象
      * @param <T>  类型
      * @return 对象
      */
-    public <T> T getJsonBody(Class<T> type) {
+    public <T> T getObjectFromBody(Class<T> type) {
         if (!contentTypeEquals(getContentType(), Constants.ContentType.APPLICATION_JSON)) {
             return null;
         }
         return Optional.ofNullable(requestBodyString)
-                .map(s -> JSON.parseObject(s, type))
+                .map(s -> JSON.parseObject(s, type))  // 可以换成Jackson、Gson等任意一个你喜欢的类库或者自己实现一个其他格式的序列化类库
                 .orElse(null);
     }
 }

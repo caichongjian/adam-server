@@ -27,7 +27,7 @@ class HttpServer {
 
         // 初始化线程池
         threadPool = new ThreadPool(Constants.Server.THREAD_POOL_SIZE);
-        // 程序退出前(kill -9除外)通知所有工作线程，并等待其正常终止
+        // 程序退出前(kill -9和其他强制结束进程方式除外)通知所有工作线程，并等待其正常终止
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 threadPool.drop();
@@ -35,7 +35,7 @@ class HttpServer {
                 LOGGER.error("InterruptedException: ", e);
                 Thread.currentThread().interrupt();
             }
-        }));
+        }, "ShutdownHookThread"));
 
         // 监听并处理连接
         try (ServerSocket ss = new ServerSocket(Constants.Server.PORT)) {
@@ -56,14 +56,20 @@ class HttpServer {
     /**
      * 处理 http 连接
      */
-    private static void handleConnection(Socket s) {
+    private static void handleConnection(Socket socket) {
 
-        try (RequestStream requestStream = new RequestStream(s.getInputStream());
+        try (Socket s = socket;
+             RequestStream requestStream = new RequestStream(s.getInputStream());
              OutputStream outputStream = s.getOutputStream()) {
 
             LOGGER.debug("客户端: {} 已连接到服务器", s.getInetAddress().getHostAddress());
 
-//            s.setSoTimeout(10 * 1000);  // Ten seconds
+            // 设置连接超时时间
+            Integer connectionTimeoutMillis = Constants.Server.CONNECTION_TIMEOUT_MILLIS;
+            if (connectionTimeoutMillis != null && connectionTimeoutMillis > 0) {
+                s.setSoTimeout(connectionTimeoutMillis);
+            }
+
             Request request = new Request(requestStream);
             request.parseRequestLineAndHeaders();
 

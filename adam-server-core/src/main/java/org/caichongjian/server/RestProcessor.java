@@ -29,13 +29,13 @@ public class RestProcessor {
         RestMethodInvoker restMethodInvoker = URI_MAPPING.get(request.getRequestURI());
         try {
             final Object returnValue = restMethodInvoker.invoke(request, response);
-            String jsonString = JSON.toJSONString(returnValue);
-            response.sendJsonString(jsonString);
+            String jsonString = JSON.toJSONString(returnValue); // 可以换成Jackson、Gson等任意一个你喜欢的类库或者自己实现一个其他格式的序列化类库
+            response.sendJsonDynamicResource(jsonString);
         } catch (Exception e) {
             LOGGER.error("请求处理失败", e);
             // TODO 请求处理失败时，提示得更人性化
             Map<String, Object> message = Map.of("success", false, "msg", "操作失败");
-            response.sendJsonString(JSON.toJSONString(message));
+            response.sendJsonDynamicResource(JSON.toJSONString(message));
         }
     }
 

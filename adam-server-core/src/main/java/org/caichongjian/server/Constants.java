@@ -26,14 +26,24 @@ public final class Constants {
 
     }
 
+    /**
+     * 也可以将这些配置放到配置文件里
+     */
     public static final class Server {
 
         private Server() {
         }
 
-        public static final int PORT = 8888;
-        public static final int THREAD_POOL_SIZE = 20;
-        public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+        public static final int PORT = 8888; // 端口号，可根据实际情况调整
+        public static final int THREAD_POOL_SIZE = 20; // 线程池大小，可根据实际情况调整
+        public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8"); // 默认字符集，可根据实际情况调整
+
+        /**
+         * 连接超时时间，单位为毫秒。
+         * 经初步测试发现socketInputStream.read()阻塞时间超过这个值的请求将被打断。
+         * 如果设置为null、负数或者0，服务器端将不限制socketInputStream.read()的超时时间。
+         */
+        public static final Integer CONNECTION_TIMEOUT_MILLIS = null;
 
     }
 

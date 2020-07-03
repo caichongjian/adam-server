@@ -9,6 +9,7 @@ import org.caichongjian.server.ServerContext;
 import org.caichongjian.server.Constants;
 
 import jakarta.servlet.http.Cookie;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
@@ -21,8 +22,9 @@ public class Response implements MiniHttpServletResponse {
     private ResponseLine responseLine = ResponseLine.OK;
 
     private enum ResponseLine {
-        OK("HTTP/1.1 200 OK"),
-        NOT_FOUND("HTTP/1.1 404 File Not Found");
+        // 可以根据自己的喜好增加500、302等等
+        OK("HTTP/1.1 200 OK"), // 这里的HTTP/1.1可以改成HTTP/1.0或者HTTP/2.0或者其他版本
+        NOT_FOUND("HTTP/1.1 404 NOT FOUND");
         private final String text;
 
         ResponseLine(String text) {
@@ -34,27 +36,40 @@ public class Response implements MiniHttpServletResponse {
         }
     }
 
-    public static final String NOT_FOUND_TEMPLATE = "<h1>Page Not Found</h1>";
+    public static final String NOT_FOUND_TEMPLATE = "<h1>Not found.</h1>"; // 可以根据自己的喜好修改相关代码，定制404页面
 
     public Response(OutputStream outputStream) {
         this.outputStream = outputStream;
     }
 
     /**
-     * 发送json到浏览器
+     * 发送JSON到浏览器
+     * <p>【也可以根据自己的喜好选择移除此方法，改为统一使用sendDynamicResource方法】</p>
+     * <p>【也可以根据自己的喜好选择移除此方法，改为新建一个数据成员中包含Response的类或者
+     * 新建一个单纯的工具类，然后将相关的发送JSON资源、发送XML资源等方法放到那个新建的类中】</p>
      *
-     * @param jsonString json字符串
+     * @param jsonString JSON字符串
      * @throws IOException IO异常
      */
-    public void sendJsonString(String jsonString) throws IOException {
-        // TODO 考虑其他的字符集
-        final byte[] bytes = stringToBytes(jsonString);
-        setContentType(Constants.ContentType.APPLICATION_JSON);
-        setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length));
+    public void sendJsonDynamicResource(String jsonString) throws IOException {
+        sendDynamicResource(stringToBytes(jsonString), Constants.ContentType.APPLICATION_JSON);
+    }
+
+    /**
+     * 发送动态资源(如动态生成的JSON、动态生成的HTML等等)到浏览器
+     *
+     * @param responseBody 动态资源(如动态生成的JSON、动态生成的HTML等等)
+     * @param contentType  内容类型，如"application/json"、"text/html"等等。
+     * @throws IOException IO异常
+     */
+    public void sendDynamicResource(byte[] responseBody, String contentType) throws IOException {
+
+        setContentType(contentType);
+        setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(responseBody.length));
 
         String responseLineAndHeader = responseLineAndHeadersToString();
         outputStream.write(stringToBytes(responseLineAndHeader)); // 响应头指定UTF-8是否有必要?
-        outputStream.write(bytes);
+        outputStream.write(responseBody);
     }
 
     /**
@@ -67,16 +82,14 @@ public class Response implements MiniHttpServletResponse {
 
         uri = (StringUtils.isBlank(uri) || "/".equals(uri)) ? "/index.html" : uri;
 
-        byte[] bytes = ServerContext.getInstance().getStaticResource(uri);
-        if (ArrayUtils.isEmpty(bytes)) {
-            bytes = stringToBytes(NOT_FOUND_TEMPLATE);
+        byte[] responseBody = ServerContext.getInstance().getStaticResource(uri);
+        if (ArrayUtils.isEmpty(responseBody)) {
+            responseBody = stringToBytes(NOT_FOUND_TEMPLATE);
             responseLine = ResponseLine.NOT_FOUND;
         }
-        setContentType(Constants.ContentType.TEXT_HTML);
-        setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length));
-        String responseLineAndHeader = responseLineAndHeadersToString();
-        outputStream.write(stringToBytes(responseLineAndHeader));
-        outputStream.write(bytes);
+        // TODO 感兴趣的朋友可以改造代码，使其支持js、css、图片等静态资源
+        String contentType = Constants.ContentType.TEXT_HTML;
+        sendDynamicResource(responseBody, contentType); // 也可以将sendDynamicResource方法中的代码复制到这里
     }
 
     /**
@@ -86,7 +99,7 @@ public class Response implements MiniHttpServletResponse {
      */
     private String responseLineAndHeadersToString() {
 
-        StringBuilder sb = new StringBuilder(128);
+        StringBuilder sb = new StringBuilder(128);  // 可根据实际情况调整
         sb.append(responseLine.getText()).append("\r\n");
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
@@ -112,6 +125,7 @@ public class Response implements MiniHttpServletResponse {
     }
 
     private byte[] stringToBytes(String str) {
+        // 可以根据自己的喜好选择字符集
         return str.getBytes(Constants.Server.DEFAULT_CHARSET);
     }
 

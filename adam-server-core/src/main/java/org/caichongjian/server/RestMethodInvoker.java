@@ -79,7 +79,7 @@ public class RestMethodInvoker {
             } else if (clazz.isArray()) {
                 parameters[i] = request.getParameterValues(argumentDefinition.getName(), clazz);
             } else if (argumentDefinition.isRequestBodyArgument()) {
-                parameters[i] = request.getJsonBody(clazz);
+                parameters[i] = request.getObjectFromBody(clazz);
             } else {
                 parameters[i] = request.getParameter(argumentDefinition.getName(), clazz);
             }

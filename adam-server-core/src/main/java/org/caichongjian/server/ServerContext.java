@@ -30,6 +30,7 @@ public class ServerContext {
     }
 
     public byte[] getStaticResource(String uri) throws IOException {
+        // TODO 存在客户端能通过HTTP请求拿到class文件的安全隐患(经初步测试发现浏览器不允许URL中出现.. 但直接通过socket发送的请求只能在服务端进行限制)
         InputStream inputStream = primarySource.getResourceAsStream("/static" + uri);
         return inputStream == null ? null : inputStream.readAllBytes();
     }
