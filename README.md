@@ -9,9 +9,9 @@ adam-server 是面向初级程序员的功能简单的 HTTP 服务器。它有�
   - 不支持反向代理、负载均衡
   - 不支持区分 GET、PUT、POST、DELETE 等请求方式；不支持跨域请求
   - 不支持 Filter、Session
-  - 不支持EJB
+  - 不支持 EJB
   - 只支持 Content-Type 为 text/html 的静态资源
-  - 请求头仅支持ASCII字符，传输其他字符需要转义，且对请求头的字符大小写和空格等格式要求十分苛刻
+  - 请求头仅支持 ASCII 字符，传输其他字符需要转义，且对请求头的字符大小写和空格等格式要求十分苛刻
   - 使用了 BIO
   - 不支持 Use KeepAlive
   - 吞吐量中等偏低
@@ -64,7 +64,7 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
 - 操作系统
   - Ubuntu 18.04.2 LTS
   - Windows 10
-- IDE
+- IDE 与 编辑器
   - Intellij IDEA
   - Visual Studio Code
   - Eclipse IDE
@@ -100,20 +100,20 @@ java -jar adam-server-example-0.1-SNAPSHOT.jar
   - org.apache.commons:commons-lang3:3.10
   - org.apache.commons:commons-collections4:4.4
   - com.google.guava:guava:29.0-jre
-  - com.alibaba:fastjson:1.2.70
+  - com.alibaba:fastjson:1.2.83
   - org.slf4j:slf4j-api:1.7.30
   - ch.qos.logback:logback-core:1.2.3
   - ch.qos.logback:logback-classic:1.2.3
   - ch.qos.logback:logback-access:1.2.3
 - 其他
-  - 《Java 编程思想（第 4 版）》、《重构:改善既有代码的设计》、其他书籍以及相关在线读书/阅读/销售平台
+  - 《Java 编程思想（第 4 版）》、《重构:改善既有代码的设计》、其他书籍以及相关作者、译者、出版社、在线读书/阅读/销售平台
   - `#include <开发环境.h>`
-  - IDE 插件
-  - Maven 插件
+  - HTML、JavaScript、 CSS 以及其他编程语言和格式
+  - IDE 插件、Maven 插件、浏览器扩展程序与操作系统自带的软件
   - Git 和 GitHub
   - 翻译软件
   - 搜索引擎
-  - 互联网上的博客、论坛、问答、公众号、在线 JS 教程、教育、leetcode、百科和其他知识和学习类平台以及创作者
+  - 互联网上的博客、论坛、问答、公众号、在线 JS 教程、教育、LeetCode、百科和其他知识和学习类平台以及创作者
   - 搜狗拼音输入法 Ubuntu 版
   - 音乐、新闻、娱乐以及其他获取灵感的渠道
   - 计算机网络
